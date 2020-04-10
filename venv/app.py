@@ -14,8 +14,8 @@ def gob():
 def Login(event):
     i=int(0)
     found=bool(False)
-    d_uname = "ali2faraz"
-    d_pass = "221bbaker"
+    d_uname = "Mariam"
+    d_pass = "Saqer"
     d_name=""
     d_address=""
     d_tel=""
