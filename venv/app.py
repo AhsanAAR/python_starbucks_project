@@ -34,54 +34,38 @@ def Login(event):
         tkinter.messagebox.showinfo("Login", "Login SuccessFull")
         with open("Records.txt", "r") as f:
             for line in f:
-                if(line.find(d_uname)!=-1):
-                    while(line[i]!='!'):
-                        i=i+1
-                    i+=1
-                    while(line[i]!='!'):
-                        d_name=d_name+line[i]
-                        i+=1
-                    i += 1
-                    while (line[i] != '!'):
-                        d_address = d_address + line[i]
-                        i += 1
-                    i += 1
-                    while (line[i] != '!'):
-                        d_tel = d_tel + line[i]
-                        i += 1
-                    i += 1
-                    while (line[i] != '!'):
-                        d_email = d_email + line[i]
-                        i += 1
-                    i += 1
-                    while (line[i] != '!'):
-                        d_snum = d_snum + line[i]
-                        i += 1
-                    i += 1
-                    while (line[i] != '!'):
-                        d_credit = d_credit + line[i]
-                        i += 1
-                    break
+                line = line.split('!')
+                d_uname = line[0]
+                d_pass = line[1]
+                d_name = line[2]
+                d_address = line[3]
+                d_tel = line[4]
+                d_email = line[5]
+                d_snum = line[6]
+                d_credit = line[7]
         success = Tk()
-        s_name = Label(success, text="Name : "+d_name)
+        s_uname = Label(success, text="User Name : " + d_uname)
+        s_pass = Label(success, text="Password : " + d_pass)
+        s_name = Label(success, text="Name : " + d_name)
         s_address = Label(success, text="Address : "+d_address)
         s_tel = Label(success, text="Tel : "+d_tel)
         s_email = Label(success, text="E-Mail : "+d_email)
         s_snum = Label(success, text="StarCard : "+d_snum)
         s_credit = Label(success, text="Credit : "+d_credit)
-        ok_Button = Button(success, text="Close",command=success.quit)
+        ok_Button = Button(success, text="Close",command=exit)
+
         s_name.grid(row=2,column=5)
         s_address.grid(row=3, column=5)
         s_tel.grid(row=4, column=5)
         s_email.grid(row=5, column=5)
         s_snum.grid(row=6, column=5)
         s_credit.grid(row=7, column=5)
-        ok_Button.grid(row=10,column=8)
+        s_uname.grid(row=8, column=5)
+        s_pass.grid(row=9, column=5)
+        ok_Button.grid(row=11,column=8)
         success.geometry("800x600")
 
-
 Q_Button = Button(loginf, text="Quit", fg="red", command=loginf.quit)
-#Q_Button.bind("<Button-1>",loginf.quit)
 L_Button=Button(loginf, text="Login", fg="blue",)
 L_Button.bind("<Button-1>",Login)
 L_login.grid(row=0,column=1)
