@@ -1,3 +1,7 @@
+#this module stores all the functions and classes that handle the user's data and
+#the backend processing of the applications
+
+
 # lists to store all the different objects in our system
 memberList = []
 employeeList = []
@@ -27,6 +31,11 @@ class star_card:
                     break
         self.m_cardNum = rand
         self.m_credit = 0
+
+    # the __str__ function is defined for each class so that it returns a string format
+    # that completely represents the object in text form. This function is then used to
+    # write to the WebUser.txt file at the termination of application so the data can be loaded
+    # later on
 
     def __str__(self):
         return '!'.join(map(str,[self.m_cardNum,self.m_credit]))
