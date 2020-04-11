@@ -1,4 +1,5 @@
 from tkinter import *
+import tkinter as tk
 import tkinter.messagebox
 from functools import partial
 
@@ -36,7 +37,7 @@ def Login(username, password):
                     d_snum = line[6]
                     d_credit = line[7]
                     d_type=line[8]
-        success = Tk()
+        success = tk.Toplevel()
         s_uname = Label(success, text="User Name : " + d_uname)
         s_pass = Label(success, text="Password : " + d_pass)
         s_name = Label(success, text="Name : " + d_name)
@@ -59,22 +60,35 @@ def Login(username, password):
         ok_Button.grid(row=11,column=8,sticky=N)
         success.geometry("500x500")
 
-def getnewuserline(username, password,d_name,d_address,d_tel,d_email,d_snum,d_credit,d_type):
-    s_name =d_name.get()
-    s_address = d_address.get()
-    s_tel = d_tel.get()
-    s_email = d_email.get()
-    s_snum = d_snum.get()
-    s_credit = d_credit.get()
-    s_type=d_type.get()
-    s_uname=username.get()
-    s_pass=password.get()
-    line=s_uname+'!'+s_pass+'!'+s_name+'!'+s_address+'!'+s_tel+'!'+s_email+'!'+s_snum+'!'+s_credit+'!'+s_type+'!'
-    with open("WebUser.txt", "a") as f:
+
+def getnewuserline(username, password, d_name, d_address, d_tel, d_email, d_snum, d_credit, d_type):
+    name =d_name.get()
+    address = d_address.get()
+    tel = d_tel.get()
+    email = d_email.get()
+    snum = d_snum.get()
+    credit = d_credit.get()
+    type=d_type.get()
+    uname=username.get()
+    passw=password.get()
+    line='\n'+uname+'!'+passw+'!'+name+'!'+address+'!'+tel+'!'+email+'!'+snum+'!'+credit+'!'+type+'!'
+    line02= '\n'+uname+','+passw+','
+    with open("Records.txt", "a") as f:
         f.write(line)
+    with open("WebUser.txt", "a") as s:
+        s.write(line02)
     tkinter.messagebox.showinfo("Creation", "User Created Successfully!")
 
-def CreateUser(username,password):
+def CreateUser(username, password):
+    success = tk.Toplevel()
+    d_name = StringVar()
+    d_address = StringVar()
+    d_tel = StringVar()
+    d_email = StringVar()
+    d_snum = StringVar()
+    d_credit = StringVar()
+    d_type = StringVar()
+    createu = partial(getnewuserline, username, password, d_name, d_address, d_tel, d_email, d_snum, d_credit, d_type)
     i=int(0)
     found=bool(False)
     d_uname = username.get()
@@ -89,15 +103,6 @@ def CreateUser(username,password):
         tkinter.messagebox.showinfo("UserName Taken", "Username Already Exist in database")
     else:
         tkinter.messagebox.showinfo("Creation", "Username is available!")
-        success = Tk()
-        d_name = StringVar()
-        d_address = StringVar()
-        d_tel = StringVar()
-        d_email = StringVar()
-        d_snum = StringVar()
-        d_credit = StringVar()
-        d_type = StringVar()
-        createu = partial(getnewuserline, username, password,d_name,d_address,d_tel,d_email,d_snum,d_credit,d_type)
         s_name = Label(success, text="Name : " )
         s_address = Label(success, text="Address : ")
         s_tel = Label(success, text="Tel : ")
@@ -115,7 +120,6 @@ def CreateUser(username,password):
         e_credit = Entry(success, textvariable=d_credit)
         e_type = Entry(success, textvariable=d_type)
         ok_Button = Button(success, text="Ok",command=createu)
-
         s_name.grid(row=2)
         s_address.grid(row=3)
         s_tel.grid(row=4)
