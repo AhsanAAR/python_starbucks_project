@@ -1,9 +1,18 @@
-usersList = []
+memberList = []
+customerList = []
+managerList = []
+starCardList = []
+itemsList = []
 
 class star_card:
     def __init__(self, cardNum, credit):
         self.m_cardNum = cardNum
         self.m_credit = credit
+
+class shop_item:
+    def __init__(self, itemName, price):
+        self.m_itemName = itemName
+        self.m_price = price
 
 class web_user:
     def __init__(self, uName, password, fullName, address, telNum, email, starCard, accessList):
@@ -17,9 +26,10 @@ class web_user:
         self.m_accessList = accessList
 
 class member(web_user):
-    def __init__(self, uName, password, fullName, address, telNum, email, starCard, points):
+    def __init__(self, uName, password, fullName, address, telNum, email, starCard, depends, points):
         super(member, self).__init__(uName,password,fullName,address,telNum,email,starCard, [self])
         self.m_points = points
+        self.depends = depends
         self.type = 'C'
         usersList.append(self)
 
@@ -35,4 +45,4 @@ class manager(basic_empoyee):
         self.type = 'M'
         usersList.append(self)
 
-def loadRecord
+def loadRecord():
