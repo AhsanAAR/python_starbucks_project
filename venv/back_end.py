@@ -1,3 +1,5 @@
+usersList = []
+
 class star_card:
     def __init__(self, cardNum, credit):
         self.m_cardNum = cardNum
@@ -19,13 +21,18 @@ class member(web_user):
         super(member, self).__init__(uName,password,fullName,address,telNum,email,starCard, [self])
         self.m_points = points
         self.type = 'C'
+        usersList.append(self)
 
 class basic_empoyee(web_user):
     def __init__(self, uName, password, fullName, address, telNum, email, starCard, membersList):
         super(empoyee, self).__init__(uName, password, fullName, address, telNum, email, starCard, [self] + membersList)
         self.type = 'E'
+        usersList.append(self)
 
 class manager(basic_empoyee):
     def __init__(self, uName, password, fullName, address, telNum, email, starCard, webUserList):
-        super(manager, self).__init__(self, uName, password, fullName, address, telNum, email, starCard, webUserList)
+        super(manager, self).__init__(self, uName, password, fullName, address, telNum, email, starCard, usersList)
         self.type = 'M'
+        usersList.append(self)
+
+def loadRecord

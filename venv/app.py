@@ -155,7 +155,6 @@ L_UName=Label(loginf, text="Username ",bg="red", fg="white")
 L_Pass=Label(loginf, text="Password ",bg="red", fg="white")
 L_Img=PhotoImage(file="unnamed.png")
 L_login=Label(loginf, image=L_Img)
-#L_login.place(x=0, y=0, relwidth=1, relheight=1)
 E_UName= Entry(loginf,textvariable=username)
 E_Pass= Entry(loginf,textvariable=password,show="*")
 def gob():
