@@ -1,16 +1,16 @@
-import back_end
+from back_end import *
 
-back_end.loadRecords()
-for listItem in back_end.starCardList:
-    print('!'.join([str(elem) for elem in listItem.__dict__.values()]))
+loadRecords()
+[print(item) for item in starCardList]
 print('#')
-for listItem in back_end.customerList:
-    print('!'.join([str(elem) for elem in listItem.__dict__.values()]))
-for listItem in back_end.employeeList:
-    print('!'.join([str(elem) for elem in listItem.__dict__.values()]))
-for listItem in back_end.managerList:
-    print('!'.join([str(elem) for elem in listItem.__dict__.values()]))
+[print(item) for item in memberList]
+[print(item) for item in employeeList]
+[print(item) for item in managerList]
 print('#')
-for listItem in back_end.itemsList:
-    print('!'.join([str(elem) for elem in listItem.__dict__.values()]))
+[print(item) for item in itemsList]
+
+
+
+
+
 

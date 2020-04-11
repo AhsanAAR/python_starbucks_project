@@ -1,5 +1,5 @@
 # lists to store all the different objects in our system
-customerList = []
+memberList = []
 employeeList = []
 managerList = []
 starCardList = []
@@ -10,12 +10,11 @@ import random
 class star_card:
     'Class Represting Star Cards'
 
-
     def __init__(self, cardNum, credit):
         self.m_cardNum = str(cardNum)
         self.m_credit = int(credit)
 
-    # constructor for making a new starCard
+    # constructor for making a new starCard with random Numbers
     def __init_(self):
         rand = 0
         found = True
@@ -29,11 +28,17 @@ class star_card:
         self.m_cardNum = rand
         self.m_credit = 0
 
+    def __str__(self):
+        return '!'.join(map(str,[self.m_cardNum,self.m_credit]))
+
 class shop_item:
     'Class respresnting shop iteams'
     def __init__(self, itemName, price):
         self.m_itemName = itemName
         self.m_price = int(price)
+
+    def __str__(self):
+        return '!'.join(map(str,[self.m_itemName,self.m_price]))
 
 class web_user:
     'Class respresnting the abstract User on the system'
@@ -50,6 +55,10 @@ class web_user:
                 self.m_starCard = test
                 break
 
+    def __str__(self):
+        return '!'.join(map(str, [self.m_uName, self.m_password, self.m_fullName,self.m_address,self.m_telNum
+                                  ,self.m_email,self.m_starCard.m_cardNum]))
+
 class member(web_user):
     'Class respresnting members or customers on the portal'
     def __init__(self, uName, password, fullName, address, telNum, email, starCardNum, depends, points):
@@ -58,17 +67,27 @@ class member(web_user):
         self.m_depends = depends
         self.m_type = 'C'
 
+    def __str__(self):
+        return self.m_type + '!' + super().__str__() + '!' + '!'.join(map(str,['Y' if self.m_depends else 'N',self.m_points]))
+
 class basic_empoyee(web_user):
     'Class respresnting a basic employee'
     def __init__(self, uName, password, fullName, address, telNum, email, starCardNum):
-        super(basic_empoyee, self).__init__(uName, password, fullName, address, telNum, email, starCardNum, [self] + customerList)
+        super(basic_empoyee, self).__init__(uName, password, fullName, address, telNum, email, starCardNum, [self] + memberList)
         self.m_type = 'E'
+
+    def __str__(self):
+        return self.m_type + '!' + super().__str__()
+
 
 class manager(web_user):
     'Class respresnting a manager'
     def __init__(self, uName, password, fullName, address, telNum, email, starCardNum):
-        super(manager, self).__init__(uName, password, fullName, address, telNum, email, starCardNum, (customerList + employeeList + managerList))
-        self.m_type = 'M'
+        super(manager, self).__init__(uName, password, fullName, address, telNum, email, starCardNum, (memberList + employeeList + managerList))
+        self.m_type = 'M' + '!'
+
+    def __str__(self):
+        return self.m_type + '!' + super().__str__()
 
 # function that converts WebUser.txt into object lists
 def loadRecords():
@@ -88,7 +107,7 @@ def loadRecords():
                 break
             line = line.split('!')
             if line[0] == 'C':
-                customerList.append(member(line[1],line[2],line[3],line[4],line[5],line[6],line[7],True if line[8] == 'Y' else False
+                memberList.append(member(line[1],line[2],line[3],line[4],line[5],line[6],line[7],True if line[8] == 'Y' else False
                                          ,line[9]))
             elif line[0] == 'E':
                 employeeList.append(basic_empoyee(line[1],line[2],line[3],line[4],line[5],line[6],line[7]))
