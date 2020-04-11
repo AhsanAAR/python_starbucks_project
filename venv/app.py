@@ -2,68 +2,11 @@ from tkinter import *
 import tkinter as tk
 import tkinter.messagebox
 from functools import partial
+from main import *
 
 
 def Topup():
     topupscreen=tk.Toplevel()
-
-
-def Login(username, password):
-    i=int(0)
-    found=bool(False)
-    d_uname = username.get()
-    d_pass = password.get()
-    d_name=""
-    d_address=""
-    d_tel=""
-    d_email=""
-    d_snum=""
-    d_credit=""
-    d_type=""
-    with open("WebUser.txt","r") as f:
-        for line in f:
-            if(line.find(d_uname)!=-1 and line.find(d_pass)!=-1):
-                found=True
-            if(found):
-                break
-    if(not found):
-        tkinter.messagebox.showinfo("Login Failed", "Username or Password Does not Match")
-    else:
-        tkinter.messagebox.showinfo("Login", "Login SuccessFull")
-        with open("Records.txt", "r") as f:
-            for line in f:
-                line = line.split('!')
-                if line[0]==d_uname:
-                    d_pass = line[1]
-                    d_name = line[2]
-                    d_address = line[3]
-                    d_tel = line[4]
-                    d_email = line[5]
-                    d_snum = line[6]
-                    d_credit = line[7]
-                    d_type=line[8]
-        success = tk.Toplevel()
-        s_uname = Label(success, text="User Name : " + d_uname)
-        s_pass = Label(success, text="Password : " + d_pass)
-        s_name = Label(success, text="Name : " + d_name)
-        s_address = Label(success, text="Address : "+d_address)
-        s_tel = Label(success, text="Tel : "+d_tel)
-        s_email = Label(success, text="E-Mail : "+d_email)
-        s_snum = Label(success, text="StarCard : "+d_snum)
-        s_credit = Label(success, text="Credit : "+d_credit)
-        s_type = Label(success, text="Type : " + d_type)
-        ok_Button = Button(success, text="Close",command=exit)
-        s_name.grid(row=2,column=5,sticky=N)
-        s_address.grid(row=3, column=5,sticky=N)
-        s_tel.grid(row=4, column=5,sticky=N)
-        s_email.grid(row=5, column=5,sticky=N)
-        s_snum.grid(row=6, column=5,sticky=N)
-        s_credit.grid(row=7, column=5,sticky=N)
-        s_type.grid(row=8, column=5, sticky=N)
-        s_uname.grid(row=9, column=5,sticky=N)
-        s_pass.grid(row=10, column=5,sticky=N)
-        ok_Button.grid(row=11,column=8,sticky=N)
-        success.geometry("500x500")
 
 
 def getnewuserline(username, password, d_name, d_address, d_tel, d_email, d_snum, d_credit, d_type):
@@ -94,6 +37,7 @@ def getnewuserline(username, password, d_name, d_address, d_tel, d_email, d_snum
         with open("WebUser.txt", "a") as s:
             s.write(line02)
         tkinter.messagebox.showinfo("Creation", "User Created Successfully!")
+
 
 def CreateUser():
     success = tk.Toplevel()
@@ -147,6 +91,83 @@ def CreateUser():
     s_pass.grid(row=10)
     ok_Button.grid(row=13,column=8)
     success.geometry("500x500")
+
+
+def Login(username, password):
+    i=int(0)
+    found=bool(False)
+    wrongpass=bool(False)
+    d_uname = username.get()
+    d_pass = password.get()
+    d_name=""
+    d_address=""
+    d_tel=""
+    d_email=""
+    d_snum=""
+    d_credit=""
+    d_type=""
+    for line in memberList:
+        if(line.find(d_uname)!=-1 and line.find(d_pass)!=-1):
+            found=True
+        elif(line.find(d_uname)!=-1 and line.find(d_pass)==-1):
+            wrongpass=True
+        if(found or wrongpass):
+            break
+    for line in employeeList:
+        if(line.find(d_uname)!=-1 and line.find(d_pass)!=-1):
+            found=True
+        elif(line.find(d_uname)!=-1 and line.find(d_pass)==-1):
+            wrongpass=True
+        if(found or wrongpass):
+            break
+    for line in managerList:
+        if(line.find(d_uname)!=-1 and line.find(d_pass)!=-1):
+            found=True
+        elif(line.find(d_uname)!=-1 and line.find(d_pass)==-1):
+            wrongpass=True
+        if(found or wrongpass):
+            break
+    if(wrongpass):
+        tkinter.messagebox.showinfo("Login Failed", "Password Does not Match")
+    elif(not found):
+        tkinter.messagebox.showinfo("Login", "UserName Does Not Exists Taking to Signup")
+        CreateUser()
+    else:
+        tkinter.messagebox.showinfo("Login", "Login SuccessFull")
+        with open("Records.txt", "r") as f:
+            for line in f:
+                line = line.split('!')
+                if line[0]==d_uname:
+                    d_pass = line[1]
+                    d_name = line[2]
+                    d_address = line[3]
+                    d_tel = line[4]
+                    d_email = line[5]
+                    d_snum = line[6]
+                    d_credit = line[7]
+                    d_type=line[8]
+        success = tk.Toplevel()
+        s_uname = Label(success, text="User Name : " + d_uname)
+        s_pass = Label(success, text="Password : " + d_pass)
+        s_name = Label(success, text="Name : " + d_name)
+        s_address = Label(success, text="Address : "+d_address)
+        s_tel = Label(success, text="Tel : "+d_tel)
+        s_email = Label(success, text="E-Mail : "+d_email)
+        s_snum = Label(success, text="StarCard : "+d_snum)
+        s_credit = Label(success, text="Credit : "+d_credit)
+        s_type = Label(success, text="Type : " + d_type)
+        ok_Button = Button(success, text="Close",command=exit)
+        s_name.grid(row=2,column=5,sticky=N)
+        s_address.grid(row=3, column=5,sticky=N)
+        s_tel.grid(row=4, column=5,sticky=N)
+        s_email.grid(row=5, column=5,sticky=N)
+        s_snum.grid(row=6, column=5,sticky=N)
+        s_credit.grid(row=7, column=5,sticky=N)
+        s_type.grid(row=8, column=5, sticky=N)
+        s_uname.grid(row=9, column=5,sticky=N)
+        s_pass.grid(row=10, column=5,sticky=N)
+        ok_Button.grid(row=11,column=8,sticky=N)
+        success.geometry("500x500")
 
 
 login = Tk()
