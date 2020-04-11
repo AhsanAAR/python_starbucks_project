@@ -55,7 +55,7 @@ class web_user:
         return '!'.join(map(str, [self.m_uName, self.m_password, self.m_fullName,self.m_address,self.m_telNum
                                   ,self.m_email,self.m_starCard.m_cardNum]))
 
-class member(web_user):
+class member(web_user):0
     'Class respresnting members or customers on the portal'
     def __init__(self, uName, password, fullName, address, telNum, email, starCardNum, depends, points):
         super(member, self).__init__(uName,password,fullName,address,telNum,email,starCardNum, [self])
