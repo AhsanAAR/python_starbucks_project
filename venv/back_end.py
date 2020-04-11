@@ -18,19 +18,6 @@ class star_card:
         self.m_cardNum = str(cardNum)
         self.m_credit = int(credit)
 
-    # constructor for making a new starCard with random Numbers
-    def __init_(self):
-        rand = 0
-        found = True
-        while found:
-            rand = str(random.randrange(10000000, 99999999))
-            found = False
-            for test in starCardList:
-                if rand == test.m_cardNum:
-                    found = True
-                    break
-        self.m_cardNum = rand
-        self.m_credit = 0
 
     # the __str__ function is defined for each class so that it returns a string format
     # that completely represents the object in text form. This function is then used to
@@ -128,5 +115,21 @@ def loadRecords():
             line = line.split('!')
             itemsList.append(shop_item(line[0],line[1]))
 
+
+# method for making a new starCard with random Numbers
+def newStarCard():
+    ret = star_card(0,0)
+    rand = 0
+    found = True
+    while found:
+        rand = str(random.randrange(10000000, 99999999))
+        found = False
+        for test in starCardList:
+            if rand == test.m_cardNum:
+                found = True
+                break
+    ret.m_cardNum = rand
+    ret.m_credit = 0
+    return ret
 
 
