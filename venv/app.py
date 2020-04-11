@@ -62,6 +62,7 @@ def Login(username, password):
 
 
 def getnewuserline(username, password, d_name, d_address, d_tel, d_email, d_snum, d_credit, d_type):
+    found = bool(False)
     name =d_name.get()
     address = d_address.get()
     tel = d_tel.get()
@@ -71,15 +72,25 @@ def getnewuserline(username, password, d_name, d_address, d_tel, d_email, d_snum
     type=d_type.get()
     uname=username.get()
     passw=password.get()
-    line='\n'+uname+'!'+passw+'!'+name+'!'+address+'!'+tel+'!'+email+'!'+snum+'!'+credit+'!'+type+'!'
-    line02= '\n'+uname+','+passw+','
-    with open("Records.txt", "a") as f:
-        f.write(line)
-    with open("WebUser.txt", "a") as s:
-        s.write(line02)
-    tkinter.messagebox.showinfo("Creation", "User Created Successfully!")
+    with open("WebUser.txt", "r") as f:
+        for line in f:
+            if (line.find(uname) != -1):
+                found = True
+            if (found):
+                break
+    if (found):
+        tkinter.messagebox.showinfo("UserName Taken", "Username Already Exist in database Try Login")
+    else:
+        tkinter.messagebox.showinfo("Creation", "Username is available!")
+        line='\n'+uname+'!'+passw+'!'+name+'!'+address+'!'+tel+'!'+email+'!'+snum+'!'+credit+'!'+type+'!'
+        line02= '\n'+uname+','+passw+','
+        with open("Records.txt", "a") as f:
+            f.write(line)
+        with open("WebUser.txt", "a") as s:
+            s.write(line02)
+        tkinter.messagebox.showinfo("Creation", "User Created Successfully!")
 
-def CreateUser(username, password):
+def CreateUser():
     success = tk.Toplevel()
     d_name = StringVar()
     d_address = StringVar()
@@ -88,56 +99,49 @@ def CreateUser(username, password):
     d_snum = StringVar()
     d_credit = StringVar()
     d_type = StringVar()
-    createu = partial(getnewuserline, username, password, d_name, d_address, d_tel, d_email, d_snum, d_credit, d_type)
+    un=StringVar()
+    passw=StringVar()
+    createu = partial(getnewuserline, un, passw, d_name, d_address, d_tel, d_email, d_snum, d_credit, d_type)
     i=int(0)
-    found=bool(False)
-    d_uname = username.get()
-    d_pass = password.get()
-    with open("WebUser.txt","r") as f:
-        for line in f:
-            if(line.find(d_uname)==-1):
-                found=True
-            if(found):
-                break
-    if(not found):
-        tkinter.messagebox.showinfo("UserName Taken", "Username Already Exist in database")
-    else:
-        tkinter.messagebox.showinfo("Creation", "Username is available!")
-        s_name = Label(success, text="Name : " )
-        s_address = Label(success, text="Address : ")
-        s_tel = Label(success, text="Tel : ")
-        s_email = Label(success, text="E-Mail : ")
-        s_snum = Label(success, text="StarCard : ")
-        s_credit = Label(success, text="Credit : ")
-        s_type = Label(success, text="Type : ")
-        s_uname=Label(success, text="UserName= "+d_uname)
-        s_pass = Label(success, text="Password= " + d_pass)
-        e_name = Entry(success, textvariable=d_name)
-        e_address = Entry(success, textvariable=d_address)
-        e_tel = Entry(success, textvariable=d_tel)
-        e_email = Entry(success, textvariable=d_email)
-        e_snum = Entry(success, textvariable=d_snum)
-        e_credit = Entry(success, textvariable=d_credit)
-        e_type = Entry(success, textvariable=d_type)
-        ok_Button = Button(success, text="Ok",command=createu)
-        s_name.grid(row=2)
-        s_address.grid(row=3)
-        s_tel.grid(row=4)
-        s_email.grid(row=5)
-        s_snum.grid(row=6)
-        s_credit.grid(row=7)
-        s_type.grid(row=8)
-        e_name.grid(row=2,column=2)
-        e_address.grid(row=3,column=2)
-        e_tel.grid(row=4,column=2)
-        e_email.grid(row=5,column=2)
-        e_snum.grid(row=6,column=2)
-        e_credit.grid(row=7,column=2)
-        e_type.grid(row=8,column=2)
-        s_uname.grid(row=9)
-        s_pass.grid(row=10)
-        ok_Button.grid(row=11,column=8)
-        success.geometry("500x500")
+    s_name = Label(success, text="Name : " )
+    s_address = Label(success, text="Address : ")
+    s_tel = Label(success, text="Tel : ")
+    s_email = Label(success, text="E-Mail : ")
+    s_snum = Label(success, text="StarCard : ")
+    s_credit = Label(success, text="Credit : ")
+    s_type = Label(success, text="Type : ")
+    s_uname=Label(success, text="UserName= ")
+    s_pass = Label(success, text="Password= ")
+    e_name = Entry(success, textvariable=d_name)
+    e_address = Entry(success, textvariable=d_address)
+    e_tel = Entry(success, textvariable=d_tel)
+    e_email = Entry(success, textvariable=d_email)
+    e_snum = Entry(success, textvariable=d_snum)
+    e_credit = Entry(success, textvariable=d_credit)
+    e_type = Entry(success, textvariable=d_type)
+    e_un = Entry(success, textvariable=un)
+    e_pass = Entry(success, show='*',textvariable=passw)
+    ok_Button = Button(success, text="Ok",command=createu)
+    s_name.grid(row=2)
+    s_address.grid(row=3)
+    s_tel.grid(row=4)
+    s_email.grid(row=5)
+    s_snum.grid(row=6)
+    s_credit.grid(row=7)
+    s_type.grid(row=8)
+    e_name.grid(row=2,column=2)
+    e_address.grid(row=3,column=2)
+    e_tel.grid(row=4,column=2)
+    e_email.grid(row=5,column=2)
+    e_snum.grid(row=6,column=2)
+    e_credit.grid(row=7,column=2)
+    e_type.grid(row=8,column=2)
+    e_un.grid(row=9, column=2)
+    e_pass.grid(row=10, column=2)
+    s_uname.grid(row=9)
+    s_pass.grid(row=10)
+    ok_Button.grid(row=13,column=8)
+    success.geometry("500x500")
 
 
 login = Tk()
@@ -146,7 +150,7 @@ loginf.pack()
 username = StringVar()
 password = StringVar()
 validatelogin = partial(Login, username, password)
-create = partial(CreateUser, username, password)
+create = partial(CreateUser)
 L_UName=Label(loginf, text="Username ",bg="red", fg="white")
 L_Pass=Label(loginf, text="Password ",bg="red", fg="white")
 L_Img=PhotoImage(file="unnamed.png")
