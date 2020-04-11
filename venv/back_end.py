@@ -46,6 +46,8 @@ class web_user:
         self.m_telNum = telNum
         self.m_email = email
         self.m_accessList = accessList
+        self.m_starCard = newStarCard()
+        #finds the starCard in the list and assigns it to self
         for test in starCardList:
             if starCardNum == test.m_cardNum:
                 self.m_starCard = test
@@ -80,7 +82,7 @@ class manager(web_user):
     'Class respresnting a manager'
     def __init__(self, uName, password, fullName, address, telNum, email, starCardNum):
         super(manager, self).__init__(uName, password, fullName, address, telNum, email, starCardNum, (memberList + employeeList + managerList))
-        self.m_type = 'M' + '!'
+        self.m_type = 'M'
 
     def __str__(self):
         return self.m_type + '!' + super().__str__()
