@@ -6,6 +6,8 @@ loadRecords()
 #so ab jeb program end hoga hum ye sari file mein write ker dain gaye to exact objects ki states
 #print ho jayein gi
 
+#also text WebUser.txt k end pe aik khali line zeroor dalin
+
 [print(item) for item in starCardList]
 print('#')
 [print(item) for item in memberList]
