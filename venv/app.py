@@ -11,6 +11,15 @@ def Topup():
 
 
 def ViewInf():
+    master = tk.Toplevel()
+
+    listbox = Listbox(master)
+    listbox.pack()
+
+    listbox.insert(END, "User Name/Password/Name/Address/Telephone/Email/Starcard Number/Credit/Points")
+
+    for item in user.m_accessList:
+        listbox.insert(END, item)
     return
 
 
