@@ -90,7 +90,7 @@ class manager(web_user):
 # function that converts WebUser.txt into object lists
 def loadRecords():
     # opens the file in read mode
-    with open("WebUser.txt","r") as f:
+    with open("Records.txt","r") as f:
         # loop for loading starCards
         for line in f:
             line = line[:-1] # to ignore the \n

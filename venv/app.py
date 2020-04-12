@@ -2,7 +2,6 @@ from tkinter import *
 import tkinter as tk
 import tkinter.messagebox
 from functools import partial
-from main import *
 from back_end import *
 
 
@@ -124,87 +123,70 @@ def CreateUser():
 
 
 def Login(username, password):
-    i=int(0)
-    found=bool(False)
-    wrongpass=bool(False)
-    membe=bool(False)
-    employee=bool(False)
-    manage=bool(False)
+    uName_found = False
+    pass_found = False
     d_uname = username.get()
     d_pass = password.get()
-    # d_name=""
-    # d_address=""
-    # d_tel=""
-    # d_email=""
-    # d_snum=""
-    # d_credit=""
-    # d_type=""
-    for line in memberList:
-        if(line.find(d_uname)!=-1 and line.find(d_pass)!=-1):
-            found=True
-        elif(line.find(d_uname)!=-1 and line.find(d_pass)==-1):
-            wrongpass=True
-        if(found or wrongpass):
-            break
-    for line in employeeList:
-        if(line.find(d_uname)!=-1 and line.find(d_pass)!=-1):
-            found=True
-        elif(line.find(d_uname)!=-1 and line.find(d_pass)==-1):
-            wrongpass=True
-        if(found or wrongpass):
-            break
-    for line in managerList:
-        if(line.find(d_uname)!=-1 and line.find(d_pass)!=-1):
-            found=True
-        elif(line.find(d_uname)!=-1 and line.find(d_pass)==-1):
-            wrongpass=True
-        if(found or wrongpass):
-            break
-    if(wrongpass):
-        tkinter.messagebox.showinfo("Login Failed", "Password Does not Match")
-    elif(not found):
-        tkinter.messagebox.showinfo("Login", "UserName Does Not Exists Taking to Signup")
+
+    if d_uname == '' or d_pass == '':
+        tkinter.messagebox.showinfo("Wrong Input", "No blank fields are allowed")
+        return
+    with open("WebUser.txt", "r") as f:
+        for line in f:
+            line = line[:-1]
+            line = line.split('!')
+            if d_uname == line[0]:
+                uName_found = True
+                if d_pass == line[1]:
+                    pass_found = True
+                break
+    if(not uName_found):
+        tkinter.messagebox.showinfo("Login", "UserName Does Not Exist Taking to Signup")
         CreateUser()
+    elif(not pass_found):
+        tkinter.messagebox.showinfo("Login Failed", "Password Does not Match")
     else:
         tkinter.messagebox.showinfo("Login", "Login SuccessFull")
-        for line in memberList:
-            line = line.split('!')
-            if line[1]==d_uname:
-                membe = True
-                user = member(line[1],line[2],line[3],line[4],line[5],line[6],line[7],line[8],line[9])
-        for line in employeeList:
-            line = line.split('!')
-            if line[1] == d_uname:
-                employee = True
-                user = basic_empoyee(line[1], line[2], line[3], line[4], line[5], line[6], line[7])
-        for line in employeeList:
-            line = line.split('!')
-            if line[1] == d_uname:
-                manage = True
-                user = manager(line[1], line[2], line[3], line[4], line[5], line[6], line[7])
-                # d_pass = line[1]
-                # d_name = line[2]
-                # d_address = line[3]
-                # d_tel = line[4]
-                # d_email = line[5]
-                # d_snum = line[6]
-                # d_credit = line[7]
-                # d_type=line[8]
+        found = False
+
+        user = 0
+
+        for find_user in memberList:
+            if found:
+                break
+            if d_uname == find_user.m_uName:
+                user = find_user
+            found = True
+
+        for find_user in employeeList:
+            if found:
+                break
+            if d_uname == find_user.m_uName:
+                user = find_user
+            found = True
+
+        for find_user in managerList:
+            if found:
+                break
+            if d_uname == find_user.m_uName:
+                user = find_user
+            found = True
+
         success = tk.Toplevel()
-        View=partial(ViewInf,user)
+        View = partial(ViewInf,user)
         Edit = partial(EditInf, user)
         order = partial(Purchasewin, user)
         TopUp = partial(Topup, user)
         lout = partial(Logout, user)
-        dele=partial(DeleteUser,user)
-        view=Button(success, text="View Info",command=View)
+        dele = partial(DeleteUser,user)
+        view = Button(success, text="View Info",command=View)
         edit = Button(success, text="Edit Info", command=Edit)
         purchase = Button(success, text="Make An Order", command=order)
         loguot = Button(success, text="Logout", command=lout)
         if(user.m_type=='M'):
             deleteb=Button(success, text="Delete Users", command=dele)
         topup = Button(success, text="TopUp Star Card", command=TopUp)
-        Welcome = Label(success, text="Welcome Back! " + user.m_Uname)
+        Welcome = Label(success, text="Welcome Back! " + user.m_uName)
         Welcome.grid(row=1,column=2)
         view.grid(row=2, column=2)
         edit.grid(row=3, column=2)
@@ -215,28 +197,9 @@ def Login(username, password):
             loguot.grid(row=7, column=2)
         else:
             loguot.grid(row=6, column=2)
-        # s_pass = Label(success, text="Password : " + user.m_Uname)
-        # s_name = Label(success, text="Name : " + d_name)
-        # s_address = Label(success, text="Address : "+d_address)
-        # s_tel = Label(success, text="Tel : "+d_tel)
-        # s_email = Label(success, text="E-Mail : "+d_email)
-        # s_snum = Label(success, text="StarCard : "+d_snum)
-        # s_credit = Label(success, text="Credit : "+d_credit)
-        # s_type = Label(success, text="Type : " + d_type)
-        # ok_Button = Button(success, text="Close",command=exit)
-        # s_name.grid(row=2,column=5,sticky=N)
-        # s_address.grid(row=3, column=5,sticky=N)
-        # s_tel.grid(row=4, column=5,sticky=N)
-        # s_email.grid(row=5, column=5,sticky=N)
-        # s_snum.grid(row=6, column=5,sticky=N)
-        # s_credit.grid(row=7, column=5,sticky=N)
-        # s_type.grid(row=8, column=5, sticky=N)
-        # s_uname.grid(row=9, column=5,sticky=N)
-        # s_pass.grid(row=10, column=5,sticky=N)
-        # ok_Button.grid(row=11,column=8,sticky=N)
         success.geometry("500x500")
 
-
+loadRecords()
 login = Tk()
 loginf=Frame(login,width=240,height=240)
 loginf.pack()
