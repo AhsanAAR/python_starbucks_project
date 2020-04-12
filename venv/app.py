@@ -44,12 +44,11 @@ def Topup(user):
     #As The Button Gets Called The Widgets Are oriented Accordingly
 
 
-    # if(user.m_type=='C'):
-    #     if(user.m_depends=='Y'):
-    #         label1.grid(row=1)
-    #         close.grid(row=2)
-    # else:
-    if 1:
+    if(user.m_type=='C'):
+        if(user.m_depends):
+            label1.grid(row=1)
+            close.grid(row=2)
+    elif 1:
         L_ask.grid(row=1)
         B_cash.grid(row=2, column=1)
         B_credit.grid(row=2, column=2)
