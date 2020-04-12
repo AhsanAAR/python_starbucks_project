@@ -69,7 +69,7 @@ def getnewuserline(username, password, d_name, d_address, d_tel, d_email, d_snum
 
 
 def CreateUser():
-    success = tk.Toplevel()
+    signUpScreen = tk.Toplevel()
     d_name = StringVar()
     d_address = StringVar()
     d_tel = StringVar()
@@ -81,25 +81,25 @@ def CreateUser():
     passw=StringVar()
     createu = partial(getnewuserline, un, passw, d_name, d_address, d_tel, d_email, d_snum, d_credit, d_type)
     i=int(0)
-    s_name = Label(success, text="Name : " )
-    s_address = Label(success, text="Address : ")
-    s_tel = Label(success, text="Tel : ")
-    s_email = Label(success, text="E-Mail : ")
-    s_snum = Label(success, text="StarCard : ")
-    s_credit = Label(success, text="Credit : ")
-    s_type = Label(success, text="Type : ")
-    s_uname=Label(success, text="UserName= ")
-    s_pass = Label(success, text="Password= ")
-    e_name = Entry(success, textvariable=d_name)
-    e_address = Entry(success, textvariable=d_address)
-    e_tel = Entry(success, textvariable=d_tel)
-    e_email = Entry(success, textvariable=d_email)
-    e_snum = Entry(success, textvariable=d_snum)
-    e_credit = Entry(success, textvariable=d_credit)
-    e_type = Entry(success, textvariable=d_type)
-    e_un = Entry(success, textvariable=un)
-    e_pass = Entry(success, show='*',textvariable=passw)
-    ok_Button = Button(success, text="Ok",command=createu)
+    s_name = Label(signUpScreen, text="Name : " )
+    s_address = Label(signUpScreen, text="Address : ")
+    s_tel = Label(signUpScreen, text="Tel : ")
+    s_email = Label(signUpScreen, text="E-Mail : ")
+    s_snum = Label(signUpScreen, text="StarCard : ")
+    s_credit = Label(signUpScreen, text="Credit : ")
+    s_type = Label(signUpScreen, text="Type : ")
+    s_uname=Label(signUpScreen, text="UserName= ")
+    s_pass = Label(signUpScreen, text="Password= ")
+    e_name = Entry(signUpScreen, textvariable=d_name)
+    e_address = Entry(signUpScreen, textvariable=d_address)
+    e_tel = Entry(signUpScreen, textvariable=d_tel)
+    e_email = Entry(signUpScreen, textvariable=d_email)
+    e_snum = Entry(signUpScreen, textvariable=d_snum)
+    e_credit = Entry(signUpScreen, textvariable=d_credit)
+    e_type = Entry(signUpScreen, textvariable=d_type)
+    e_un = Entry(signUpScreen, textvariable=un)
+    e_pass = Entry(signUpScreen, show='*',textvariable=passw)
+    ok_Button = Button(signUpScreen, text="Ok",command=createu)
     s_name.grid(row=2)
     s_address.grid(row=3)
     s_tel.grid(row=4)
@@ -119,7 +119,7 @@ def CreateUser():
     s_uname.grid(row=9)
     s_pass.grid(row=10)
     ok_Button.grid(row=13,column=8)
-    success.geometry("500x500")
+    signUpScreen.geometry("500x500")
 
 
 def Login(username, password):
@@ -156,21 +156,21 @@ def Login(username, password):
                 break
             if d_uname == find_user.m_uName:
                 user = find_user
-            found = True
+                found = True
 
         for find_user in employeeList:
             if found:
                 break
             if d_uname == find_user.m_uName:
                 user = find_user
-            found = True
+                found = True
 
         for find_user in managerList:
             if found:
                 break
             if d_uname == find_user.m_uName:
                 user = find_user
-            found = True
+                found = True
 
         success = tk.Toplevel()
         View = partial(ViewInf,user)
