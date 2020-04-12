@@ -7,38 +7,53 @@ from back_end import *
 
 def Topup(user):
     topupscreen=tk.Toplevel()
+    topupscreen.geometry("640x480")
     def exit_btn():
 
         topupscreen.destroy()
         topupscreen.update()
+    def exit_btn2():
 
-    close = Button(success, text="close", command=exit_btn)
+        user.m_starCard.m_credit+=int(credit.get())
+        tkinter.messagebox.showinfo("Top Up Successful", "Your StarCard Has Benn Top Up With $"+credit.get()+ " via Credit Card Number "+creditcardNum.get())
+        topupscreen.destroy()
+        topupscreen.update()
 
-    if(user.m_type=='C'):
-        if(user.m_depends=='Y'):
-            label1=Label(topupscreen,text="Please Ask Your Dependant Card To Top Up!")
-            label1.grid(row=1)
-            close.grid(row=2)
-    else:
-        L_ask=Label(topupscreen,text="How do You Want To Top Up?")
-        def casho():
-            go=Label(topupscreen,text="(a cash machine should be available in Starbucks,You Can Top Up via Cash There").pack()
-            return
-        def credito():
-            go=Label(topupscreen,text="Please Enter Credit Card Number : ")
-            go.grid(row=3,column=1)
-            creditcardNum=StringVar()
-            enter=Label(topupscreen,textvariable=creditcardNum)
-            enter.grid(row=3,column=2)
-            got = Label(topupscreen, text="Please Enter Amount : ")
-            got.grid(row=4, column=1)
-            credit = StringVar()
-            enter1 = Label(topupscreen, textvariable=credit)
-            enter.grid(row=4, column=2)
-            top=Button(topupscreen,text="Complete Topup")
-            top.grid(row=5,column=2)
+    def casho():
+        tkinter.messagebox.showinfo("Cash Deposit", "A cash machine should be available in Starbucks,You Can Top Up via Cash There")
+        exit_btn()
 
-        B_cash=Button(topupscreen,text="Cash",command=casho)
+    def credito():
+        go.grid(row=3, column=1)
+        enter.grid(row=3, column=2)
+        got.grid(row=4, column=1)
+        enter1.grid(row=4, column=2)
+        top.grid(row=5, column=2)
+    label1 = Label(topupscreen, text="Please Ask Your Dependant Card To Top Up!")
+    L_ask = Label(topupscreen, text="How do You Want To Top Up?")
+    go = Label(topupscreen, text="Please Enter Credit Card Number : ")
+    creditcardNum = StringVar()
+    enter = Entry(topupscreen, textvariable=creditcardNum)
+    credit = StringVar()
+    enter1 = Entry(topupscreen, textvariable=credit)
+    got = Label(topupscreen, text="Please Enter Amount : ")
+    top = Button(topupscreen, text="Complete Topup", command=exit_btn2)
+    B_cash = Button(topupscreen, text="Cash", command=casho)
+    B_credit = Button(topupscreen, text="Credit", command=credito)
+
+    # if(user.m_type=='C'):
+    #     if(user.m_depends=='Y'):
+    #         label1.grid(row=1)
+    #         close.grid(row=2)
+    # else:
+    if 1:
+        L_ask.grid(row=1)
+        B_cash.grid(row=2, column=1)
+        B_credit.grid(row=2, column=2)
+
+
+
+
 
 
 
