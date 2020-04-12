@@ -53,22 +53,20 @@ def Topup(user):
         B_credit.grid(row=2, column=2)
 
 
-
-
-
-
-
 def ViewInf(user):
     master = tk.Toplevel()
 
-    listbox = Listbox(master)
+    sb = Scrollbar(master, orient=VERTICAL)
+    sb.pack(side=RIGHT, fill=Y)
+    listbox = Listbox(master,width=500, height=500, yscrollcommand=sb.set)
+    sb.config(command=listbox.yview)
     listbox.pack()
 
     listbox.insert(END, "User Name/Password/Name/Address/Telephone/Email/Starcard Number/Credit/Points")
 
     for item in user.m_accessList:
-        listbox.insert(END, item)
-    return
+        listbox.insert(END, str(item))
+    master.geometry("640x480")
 
 
 def EditInf():
