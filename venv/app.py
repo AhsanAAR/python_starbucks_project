@@ -5,11 +5,44 @@ from functools import partial
 from back_end import *
 
 
-def Topup():
+def Topup(user):
     topupscreen=tk.Toplevel()
+    def exit_btn():
+
+        topupscreen.destroy()
+        topupscreen.update()
+
+    close = Button(success, text="close", command=exit_btn)
+
+    if(user.m_type=='C'):
+        if(user.m_depends=='Y'):
+            label1=Label(topupscreen,text="Please Ask Your Dependant Card To Top Up!")
+            label1.grid(row=1)
+            close.grid(row=2)
+    else:
+        L_ask=Label(topupscreen,text="How do You Want To Top Up?")
+        def casho():
+            go=Label(topupscreen,text="(a cash machine should be available in Starbucks,You Can Top Up via Cash There").pack()
+            return
+        def credito():
+            go=Label(topupscreen,text="Please Enter Credit Card Number : ")
+            go.grid(row=3,column=1)
+            creditcardNum=StringVar()
+            enter=Label(topupscreen,textvariable=creditcardNum)
+            enter.grid(row=3,column=2)
+            got = Label(topupscreen, text="Please Enter Amount : ")
+            got.grid(row=4, column=1)
+            credit = StringVar()
+            enter1 = Label(topupscreen, textvariable=credit)
+            enter.grid(row=4, column=2)
+            top=Button(topupscreen,text="Complete Topup")
+            top.grid(row=5,column=2)
+
+        B_cash=Button(topupscreen,text="Cash",command=casho)
 
 
-def ViewInf():
+
+def ViewInf(user):
     master = tk.Toplevel()
 
     listbox = Listbox(master)
@@ -179,10 +212,16 @@ def Login(username, password):
         TopUp = partial(Topup, user)
         lout = partial(Logout, user)
         dele = partial(DeleteUser,user)
+
+        def exit_btn():
+
+            success.destroy()
+            success.update()
+
         view = Button(success, text="View Info",command=View)
         edit = Button(success, text="Edit Info", command=Edit)
         purchase = Button(success, text="Make An Order", command=order)
-        loguot = Button(success, text="Logout", command=lout)
+        loguot = Button(success, text="Logout", command=exit_btn)
         if(user.m_type=='M'):
             deleteb=Button(success, text="Delete Users", command=dele)
         topup = Button(success, text="TopUp Star Card", command=TopUp)
