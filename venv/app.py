@@ -6,30 +6,31 @@ from back_end import *
 
 
 def Topup(user):
-    topupscreen=tk.Toplevel()
+    topupscreen=tk.Toplevel()#creation of topup screen and dimention of topup scren
     topupscreen.geometry("640x480")
-    def exit_btn():
+    def exit_btn():#exit function if user selects cash
 
         topupscreen.destroy()
         topupscreen.update()
-    def exit_btn2():
+    def exit_btn2():#exit function if user Successfully Completes Topup
 
         user.m_starCard.m_credit+=int(credit.get())
         tkinter.messagebox.showinfo("Top Up Successful", "Your StarCard Has Benn Top Up With $"+credit.get()+ " via Credit Card Number "+creditcardNum.get())
         topupscreen.destroy()
         topupscreen.update()
 
-    def casho():
+    def casho():#Cash function for Cash Button
         tkinter.messagebox.showinfo("Cash Deposit", "A cash machine should be available in Starbucks,You Can Top Up via Cash There")
         exit_btn()
 
-    def credito():
+    def credito():#Function for credit button
         go.grid(row=3, column=1)
         enter.grid(row=3, column=2)
         got.grid(row=4, column=1)
         enter1.grid(row=4, column=2)
         top.grid(row=5, column=2)
     label1 = Label(topupscreen, text="Please Ask Your Dependant Card To Top Up!")
+    #Now we Create All The Widgets that are required in our window
     L_ask = Label(topupscreen, text="How do You Want To Top Up?")
     go = Label(topupscreen, text="Please Enter Credit Card Number : ")
     creditcardNum = StringVar()
@@ -40,6 +41,8 @@ def Topup(user):
     top = Button(topupscreen, text="Complete Topup", command=exit_btn2)
     B_cash = Button(topupscreen, text="Cash", command=casho)
     B_credit = Button(topupscreen, text="Credit", command=credito)
+    #As The Button Gets Called The Widgets Are oriented Accordingly
+
 
     # if(user.m_type=='C'):
     #     if(user.m_depends=='Y'):
