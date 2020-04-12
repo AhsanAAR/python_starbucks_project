@@ -29,7 +29,6 @@ def Topup(user):
         got.grid(row=4, column=1)
         enter1.grid(row=4, column=2)
         top.grid(row=5, column=2)
-    label1 = Label(topupscreen, text="Please Ask Your Dependant Card To Top Up!")
     #Now we Create All The Widgets that are required in our window
     L_ask = Label(topupscreen, text="How do You Want To Top Up?")
     go = Label(topupscreen, text="Please Enter Credit Card Number : ")
@@ -46,8 +45,8 @@ def Topup(user):
 
     if(user.m_type=='C'):
         if(user.m_depends):
-            label1.grid(row=1)
-            close.grid(row=2)
+            tkinter.messagebox.showinfo("Dependant Card", "Please Ask Your Dependant Card To Top Up!")
+            exit_btn()
     elif 1:
         L_ask.grid(row=1)
         B_cash.grid(row=2, column=1)
