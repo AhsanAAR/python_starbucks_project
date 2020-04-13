@@ -5,7 +5,8 @@ from functools import partial
 from back_end import *
 
 loadRecords()
-
+k = 0
+total = 0
 
 def Topup(user):
     topupscreen=tk.Toplevel()#creation of topup screen and dimention of topup scren
@@ -80,14 +81,13 @@ def Purchasewin(user):
 
         topupscreen.destroy()
         topupscreen.update()
-    k = 0
-    total = 0
+
     def checkout():
         global total
         if(user.m_starCard.m_credit>=total):
             user.m_starCard.m_credit -= total
             tkinter.messagebox.showinfo("Order Successful","Your Order Was Successful Please Wait While We PrePare It For You")
-            tkinter.messagebox.showinfo("Remaining Balance","Your Remaining Balance is Dhs" + user.m_starCard.m_credit)
+            tkinter.messagebox.showinfo("Remaining Balance","Your Remaining Balance is Dhs" + str(user.m_starCard.m_credit))
             exit_btn()
         else:
             tkinter.messagebox.showinfo("Order UnsuccessFul","Your Order Could Not Preceed Due to Insufficient Funds")
