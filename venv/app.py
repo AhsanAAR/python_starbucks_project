@@ -89,7 +89,7 @@ def EditInf(user):
     elif(user.m_type=='E'):
         menulist=[user]+memberList
     elif(user.m_type=='M'):
-        menulist = [user] + memberList + employeeList
+        menulist = [user] + [memberList] + [employeeList]
     def delete_entry():
         q = int(listbox.curselection()[0])
         del menulist[which_selected()]
@@ -216,24 +216,16 @@ def Purchasewin(user):
         im = partial(addtocart, items, listbox)
         itemmenu.add_command(label=items.m_itemName + "  " + str(items.m_price), command=im)
 
-def Logout():
-    back_end.writeToFiles()
 
-
-
-def DeleteUser():
-    return
-
-
-def getnewuserline(username, password, d_name, d_address, d_tel, d_email, d_snum, d_credit, d_type):
+def getnewuserline(username, password, d_name, d_address, d_tel, d_email, d_snum, d_type):
+    use = 0
     found = bool(False)
     name =d_name.get()
     address = d_address.get()
     tel = d_tel.get()
     email = d_email.get()
-    snum = d_snum.get()
-    credit = d_credit.get()
-    type=d_type.get()
+    snum = d_snum
+    type=d_type
     uname=username.get()
     passw=password.get()
     with open("WebUser.txt", "r") as f:
@@ -243,16 +235,20 @@ def getnewuserline(username, password, d_name, d_address, d_tel, d_email, d_snum
             if (found):
                 break
     if (found):
-        tkinter.messagebox.showinfo("UserName Taken", "Username Already Exist in database Try Login")
+        tkinter.messagebox.showinfo("UserName Taken", "Username Already Exist in database Try Login Or Use Different Username")
     else:
         tkinter.messagebox.showinfo("Creation", "Username is available!")
-        line='\n'+uname+'!'+passw+'!'+name+'!'+address+'!'+tel+'!'+email+'!'+snum+'!'+credit+'!'+type+'!'
-        line02= '\n'+uname+','+passw+','
-        with open("Records.txt", "a") as f:
-            f.write(line)
-        with open("WebUser.txt", "a") as s:
-            s.write(line02)
+        if(d_type=='C'):
+            use=member(uname,passw,name,address,tel,email,snum,'N','0')
+            memberList.append(use)
+        elif(d_type=='E'):
+            use=basic_empoyee(uname,passw,name,address,tel,email,snum)
+            employeeList.append(use)
+        else:
+            use=manager(uname,passw,name,address,tel,email,snum)
+            managerList.append(use)
         tkinter.messagebox.showinfo("Creation", "User Created Successfully!")
+        writeToFiles()
 
 
 def CreateUser():
@@ -261,29 +257,35 @@ def CreateUser():
     d_address = StringVar()
     d_tel = StringVar()
     d_email = StringVar()
-    d_snum = StringVar()
-    d_credit = StringVar()
-    d_type = StringVar()
+    r=newStarCard()
+    starCardList.append(r)
+    d_snum =r.m_cardNum
+    d_type = ""
     un=StringVar()
     passw=StringVar()
-    createu = partial(getnewuserline, un, passw, d_name, d_address, d_tel, d_email, d_snum, d_credit, d_type)
+    createu = partial(getnewuserline, un, passw, d_name, d_address, d_tel, d_email, d_snum, d_type)
     i=int(0)
+    def sete():
+        d_type = 'E'
+    def setc():
+        d_type = 'C'
+    def setm():
+        d_type = 'M'
     s_name = Label(signUpScreen, text="Name : " )
     s_address = Label(signUpScreen, text="Address : ")
     s_tel = Label(signUpScreen, text="Tel : ")
     s_email = Label(signUpScreen, text="E-Mail : ")
     s_snum = Label(signUpScreen, text="StarCard : ")
-    s_credit = Label(signUpScreen, text="Credit : ")
     s_type = Label(signUpScreen, text="Type : ")
-    s_uname=Label(signUpScreen, text="UserName= ")
-    s_pass = Label(signUpScreen, text="Password= ")
+    s_uname=Label(signUpScreen, text="UserName :  ")
+    s_pass = Label(signUpScreen, text="Password :  ")
     e_name = Entry(signUpScreen, textvariable=d_name)
     e_address = Entry(signUpScreen, textvariable=d_address)
     e_tel = Entry(signUpScreen, textvariable=d_tel)
     e_email = Entry(signUpScreen, textvariable=d_email)
-    e_snum = Entry(signUpScreen, textvariable=d_snum)
-    e_credit = Entry(signUpScreen, textvariable=d_credit)
-    e_type = Entry(signUpScreen, textvariable=d_type)
+    e_type = Button(signUpScreen, text="Employee",command=sete)
+    m_type = Button(signUpScreen, text="Manager",command=setm)
+    c_type = Button(signUpScreen, text="Customer",command=setc)
     e_un = Entry(signUpScreen, textvariable=un)
     e_pass = Entry(signUpScreen, show='*',textvariable=passw)
     ok_Button = Button(signUpScreen, text="Ok",command=createu)
@@ -301,6 +303,8 @@ def CreateUser():
     e_snum.grid(row=6,column=2)
     e_credit.grid(row=7,column=2)
     e_type.grid(row=8,column=2)
+    m_type.grid(row=8, column=3)
+    c_type.grid(row=8, column=4)
     e_un.grid(row=9, column=2)
     e_pass.grid(row=10, column=2)
     s_uname.grid(row=9)
@@ -368,7 +372,8 @@ def Login(username, password):
         dele = partial(DeleteUser,user)
 
         def exit_btn():
-
+            writeToFiles()
+            tkinter.messagebox.showinfo("Logout","Successfully Logged Out Of System Please Sign In Again")
             success.destroy()
             success.update()
 
@@ -376,8 +381,6 @@ def Login(username, password):
         edit = Button(success, text="Edit Info", command=Edit)
         purchase = Button(success, text="Make An Order", command=order)
         loguot = Button(success, text="Logout", command=exit_btn)
-        if(user.m_type=='M'):
-            deleteb=Button(success, text="Delete Users", command=dele)
         topup = Button(success, text="TopUp Star Card", command=TopUp)
         Welcome = Label(success, text="Welcome Back! " + user.m_uName)
         Welcome.grid(row=1,column=2)
@@ -385,11 +388,7 @@ def Login(username, password):
         edit.grid(row=3, column=2)
         purchase.grid(row=4, column=2)
         topup.grid(row=5,column=2)
-        if (user.m_type == 'M'):
-            deleteb.grid(row=6, column=2)
-            loguot.grid(row=7, column=2)
-        else:
-            loguot.grid(row=6, column=2)
+        loguot.grid(row=6, column=2)
         crlabel=Label(success,text="Current Balance : "+ str(user.m_starCard.m_credit)+" Dhs ")
         crlabel.grid(row=8,column=2)
         success.geometry("500x500")

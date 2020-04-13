@@ -38,14 +38,13 @@ class shop_item:
 
 class web_user:
     'Class respresnting the abstract User on the system'
-    def __init__(self, uName, password, fullName, address, telNum, email, starCardNum, accessList):
+    def __init__(self, uName, password, fullName, address, telNum, email, starCardNum):
         self.m_uName = uName
         self.m_password = password
         self.m_fullName = fullName
         self.m_address = address
         self.m_telNum = telNum
         self.m_email = email
-        self.m_accessList = accessList
         self.m_starCard = newStarCard()
         #finds the starCard in the list and assigns it to self
         for test in starCardList:
@@ -60,7 +59,7 @@ class web_user:
 class member(web_user):
     'Class respresnting members or customers on the portal'
     def __init__(self, uName, password, fullName, address, telNum, email, starCardNum, depends, points):
-        super(member, self).__init__(uName,password,fullName,address,telNum,email,starCardNum, [self])
+        super(member, self).__init__(uName,password,fullName,address,telNum,email,starCardNum)
         self.m_points = int(points)
         self.m_depends = depends
         self.m_type = 'C'
@@ -71,7 +70,7 @@ class member(web_user):
 class basic_empoyee(web_user):
     'Class respresnting a basic employee'
     def __init__(self, uName, password, fullName, address, telNum, email, starCardNum):
-        super(basic_empoyee, self).__init__(uName, password, fullName, address, telNum, email, starCardNum, [self] + memberList)
+        super(basic_empoyee, self).__init__(uName, password, fullName, address, telNum, email, starCardNum)
         self.m_type = 'E'
 
     def __str__(self):
@@ -81,7 +80,7 @@ class basic_empoyee(web_user):
 class manager(web_user):
     'Class respresnting a manager'
     def __init__(self, uName, password, fullName, address, telNum, email, starCardNum):
-        super(manager, self).__init__(uName, password, fullName, address, telNum, email, starCardNum, (memberList + employeeList + managerList))
+        super(manager, self).__init__(uName, password, fullName, address, telNum, email, starCardNum)
         self.m_type = 'M'
 
     def __str__(self):
