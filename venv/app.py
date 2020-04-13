@@ -4,6 +4,8 @@ import tkinter.messagebox
 from functools import partial
 from back_end import *
 
+loadRecords()
+
 
 def Topup(user):
     topupscreen=tk.Toplevel()#creation of topup screen and dimention of topup scren
@@ -15,7 +17,7 @@ def Topup(user):
     def exit_btn2():#exit function if user Successfully Completes Topup
 
         user.m_starCard.m_credit+=int(credit.get())
-        tkinter.messagebox.showinfo("Top Up Successful", "Your StarCard Has Benn Top Up With $"+credit.get()+ " via Credit Card Number "+creditcardNum.get())
+        tkinter.messagebox.showinfo("Top Up Successful", "Your StarCard Has Benn Top Up With "+credit.get()+ " Dhs via Credit Card Number "+creditcardNum.get())
         topupscreen.destroy()
         topupscreen.update()
 
@@ -62,7 +64,7 @@ def ViewInf(user):
     sb.config(command=listbox.yview)
     listbox.pack()
 
-    listbox.insert(END, "User Name/Password/Name/Address/Telephone/Email/Starcard Number/Credit/Points")
+    listbox.insert(END, "User Name      /Password       /Name       /Address    /Telephone      /Email      /Starcard Number    /Credit     Dependant       /Points")
 
     for item in user.m_accessList:
         listbox.insert(END, str(item))
@@ -73,9 +75,63 @@ def EditInf():
     return
 
 
-def Purchasewin():
-    return
+def Purchasewin(user):
+    def exit_btn():#exit function if user selects cash
 
+        topupscreen.destroy()
+        topupscreen.update()
+    k = 0
+    total = 0
+    def checkout():
+        global total
+        if(user.m_starCard.m_credit>=total):
+            user.m_starCard.m_credit -= total
+            tkinter.messagebox.showinfo("Order Successful","Your Order Was Successful Please Wait While We PrePare It For You")
+            tkinter.messagebox.showinfo("Remaining Balance","Your Remaining Balance is Dhs" + user.m_starCard.m_credit)
+            exit_btn()
+        else:
+            tkinter.messagebox.showinfo("Order UnsuccessFul","Your Order Could Not Preceed Due to Insufficient Funds")
+            tkinter.messagebox.showinfo("TidBid","TopUp Your Account And Try Again")
+            exit_btn()
+
+
+
+
+    def addtocart(items, listbox):
+        global k
+        if (k != 0):
+            listbox.delete(END)
+        global total
+        total += items.m_price
+        i = items.m_itemName + "      " + str(items.m_price)
+        listbox.insert(END, i)
+        j = "Total : " + str(total)+" Dhs"
+        listbox.insert(END, j)
+        if (k == 0):
+            k += 1
+        return
+
+    PurWin = tk.Toplevel()
+    f1 = Frame(PurWin, width=200, height=200)
+    f2 = Frame(PurWin, width=200, height=200)
+    f1.grid(row=0)
+    f2.grid(row=1)
+    PurWin.geometry("640x480")
+    mainmenu = Menu(PurWin)
+    PurWin.config(menu=mainmenu)
+    itemmenu = Menu(mainmenu)
+    mainmenu.add_cascade(label="Add Items", menu=itemmenu)
+    sb = Scrollbar(f1, orient=VERTICAL)
+    sb.pack(side=RIGHT, fill=Y)
+    listbox = Listbox(f1, width=50, height=10, yscrollcommand=sb.set)
+    sb.config(command=listbox.yview)
+    listbox.pack()
+    listbox.insert(END, "Items        Price")
+    checkoutbutton = Button(f2, text="Prceed To Checkout", command=checkout)
+    checkoutbutton.pack()
+    for items in itemsList:
+        im = partial(addtocart, items, listbox)
+        itemmenu.add_command(label=items.m_itemName + "  " + str(items.m_price), command=im)
 
 def Logout():
     return
