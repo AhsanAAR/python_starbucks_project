@@ -81,11 +81,6 @@ def ViewInf(user):
         listbox.insert(END, str(item))
 
 
-def which_selected():
-    # print("At {0}".format(select.curselection()))
-    return int(select.curselection()[0])
-
-
 def EditInf(user):
 
     menulist=0
@@ -222,7 +217,8 @@ def Purchasewin(user):
         itemmenu.add_command(label=items.m_itemName + "  " + str(items.m_price), command=im)
 
 def Logout():
-    return
+    back_end.writeToFiles()
+
 
 
 def DeleteUser():
