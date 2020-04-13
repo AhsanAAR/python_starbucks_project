@@ -96,11 +96,55 @@ def EditInf(user):
     elif(user.m_type=='M'):
         menulist = [user] + memberList + employeeList
     def delete_entry():
-
+        q = int(listbox.curselection()[0])
         del menulist[which_selected()]
         listbox.delete(0, END)
         for item in menulist:
             listbox.insert(END, str(item))
+
+    def update_entry():
+        q = int(listbox.curselection()[0])
+        userr=menulist[q]
+        signUpScreen = tk.Toplevel()
+        d_name = StringVar()
+        d_address = StringVar()
+        d_tel = StringVar()
+        d_email = StringVar()
+        passw = StringVar()
+
+        def udate():
+            userr.m_fullName = d_name.get()
+            userr.m_address = d_address.get()
+            userr.m_telNum = d_tel.get()
+            userr.m_email = d_email.get()
+            userr.m_password = passw.get()
+            tkinter.messagebox.showinfo("Edit", "Details Updated Successfully")
+            signUpScreen.destroy()
+            signUpScreen.update()
+
+        s_name = Label(signUpScreen, text="Name : ")
+        s_address = Label(signUpScreen, text="Address : ")
+        s_tel = Label(signUpScreen, text="Tel : ")
+        s_email = Label(signUpScreen, text="E-Mail : ")
+        s_pass = Label(signUpScreen, text="Password : ")
+        e_name = Entry(signUpScreen, textvariable=d_name)
+        e_address = Entry(signUpScreen, textvariable=d_address)
+        e_tel = Entry(signUpScreen, textvariable=d_tel)
+        e_email = Entry(signUpScreen, textvariable=d_email)
+        e_pass = Entry(signUpScreen, show='*', textvariable=passw)
+        ok_Button = Button(signUpScreen, text="Ok", command=udate)
+        s_name.grid(row=2)
+        s_address.grid(row=3)
+        s_tel.grid(row=4)
+        s_email.grid(row=5)
+        e_name.grid(row=2, column=2)
+        e_address.grid(row=3, column=2)
+        e_tel.grid(row=4, column=2)
+        e_email.grid(row=5, column=2)
+        e_pass.grid(row=10, column=2)
+        s_pass.grid(row=10)
+        ok_Button.grid(row=13, column=8)
+        signUpScreen.geometry("500x500")
 
     master = tk.Toplevel()
     f1 = Frame(master, width=200, height=200)
@@ -110,9 +154,7 @@ def EditInf(user):
     sb = Scrollbar(f1, orient=VERTICAL)
     sb.pack(side=RIGHT, fill=Y)
     listbox = Listbox(f1, width=100, height=20, yscrollcommand=sb.set)
-    b2 = Button(f2, text="Edit", command=partial(update_entry,menulist[which_selected()]))
-
-
+    b2 = Button(f2, text="Edit", command=update_entry)
     b3 = Button(f2, text="Delete", command=delete_entry)
     listbox.pack()
     b2.pack()
@@ -120,8 +162,6 @@ def EditInf(user):
         b3.pack()
     for item in menulist:
         listbox.insert(END, str(item))
-
-
 
 def Purchasewin(user):
 
