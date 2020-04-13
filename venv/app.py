@@ -10,7 +10,6 @@ total = 0
 
 def Topup(user):
     topupscreen=tk.Toplevel()#creation of topup screen and dimention of topup scren
-    topupscreen.geometry("640x480")
     def exit_btn():#exit function if user selects cash
 
         topupscreen.destroy()
@@ -50,37 +49,88 @@ def Topup(user):
         if(user.m_depends):
             tkinter.messagebox.showinfo("Dependant Card", "Please Ask Your Dependant Card To Top Up!")
             exit_btn()
-    elif 1:
+        else:
+            L_ask.grid(row=1)
+            B_cash.grid(row=2, column=1)
+            B_credit.grid(row=2, column=2)
+    else:
         L_ask.grid(row=1)
         B_cash.grid(row=2, column=1)
         B_credit.grid(row=2, column=2)
-
+    topupscreen.geometry("640x480")
 
 def ViewInf(user):
     master = tk.Toplevel()
-
+    master.geometry("640x480")
+    menulist = 0
+    if (user.m_type == 'C'):
+        menulist = [user]
+    elif (user.m_type == 'E'):
+        menulist = [user] + memberList
+    elif (user.m_type == 'M'):
+        menulist = [user] + memberList + employeeList
     sb = Scrollbar(master, orient=VERTICAL)
     sb.pack(side=RIGHT, fill=Y)
-    listbox = Listbox(master,width=500, height=500, yscrollcommand=sb.set)
+    listbox = Listbox(master,width=300, height=20, yscrollcommand=sb.set)
     sb.config(command=listbox.yview)
     listbox.pack()
 
     listbox.insert(END, "User Name      /Password       /Name       /Address    /Telephone      /Email      /Starcard Number    /Credit     Dependant       /Points")
 
-    for item in user.m_accessList:
+    for item in menulist:
         listbox.insert(END, str(item))
-    master.geometry("640x480")
 
 
-def EditInf():
-    return
+def which_selected():
+    # print("At {0}".format(select.curselection()))
+    return int(select.curselection()[0])
+
+
+def EditInf(user):
+
+    menulist=0
+    if(user.m_type=='C'):
+        menulist=[user]
+    elif(user.m_type=='E'):
+        menulist=[user]+memberList
+    elif(user.m_type=='M'):
+        menulist = [user] + memberList + employeeList
+    def delete_entry():
+
+        del menulist[which_selected()]
+        listbox.delete(0, END)
+        for item in menulist:
+            listbox.insert(END, str(item))
+
+    master = tk.Toplevel()
+    f1 = Frame(master, width=200, height=200)
+    f2 = Frame(master, width=200, height=200)
+    f1.grid(row=0)
+    f2.grid(row=1)
+    sb = Scrollbar(f1, orient=VERTICAL)
+    sb.pack(side=RIGHT, fill=Y)
+    listbox = Listbox(f1, width=100, height=20, yscrollcommand=sb.set)
+    b2 = Button(f2, text="Edit", command=partial(update_entry,menulist[which_selected()]))
+
+
+    b3 = Button(f2, text="Delete", command=delete_entry)
+    listbox.pack()
+    b2.pack()
+    if(user.m_type=="M"):
+        b3.pack()
+    for item in menulist:
+        listbox.insert(END, str(item))
+
 
 
 def Purchasewin(user):
+
+
     def exit_btn():#exit function if user selects cash
 
         topupscreen.destroy()
         topupscreen.update()
+
 
     def checkout():
         global total
@@ -93,8 +143,6 @@ def Purchasewin(user):
             tkinter.messagebox.showinfo("Order UnsuccessFul","Your Order Could Not Preceed Due to Insufficient Funds")
             tkinter.messagebox.showinfo("TidBid","TopUp Your Account And Try Again")
             exit_btn()
-
-
 
 
     def addtocart(items, listbox):
@@ -306,6 +354,8 @@ def Login(username, password):
             loguot.grid(row=7, column=2)
         else:
             loguot.grid(row=6, column=2)
+        crlabel=Label(success,text="Current Balance : "+ str(user.m_starCard.m_credit)+" Dhs ")
+        crlabel.grid(row=8,column=2)
         success.geometry("500x500")
 
 loadRecords()
@@ -322,10 +372,6 @@ L_Img=PhotoImage(file="unnamed.png")
 L_login=Label(loginf, image=L_Img)
 E_UName= Entry(loginf,textvariable=username)
 E_Pass= Entry(loginf,textvariable=password,show="*")
-def gob():
-    return
-
-
 Q_Button = Button(loginf, text="Quit", fg="red", command=loginf.quit)
 L_Button=Button(loginf, text="Login", fg="blue",command=validatelogin)
 C_Button=Button(loginf, text="Create Account", fg="green",command=create)
