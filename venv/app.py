@@ -65,8 +65,8 @@ def ViewInf(user):
     sb.config(command=listbox.yview)
     listbox.pack()
 
-    listbox.insert(END, "User Name      /Password       /Name       /Address    /Telephone      /Email      /Starcard Number    /Credit     Dependant       /Points")
-
+    listbox.insert(END, "User Name      Name        Address     Telephone       Email       Starcard Number     Credit      Dependant       Points")
+    print(user.m_accessList)
     for item in user.m_accessList:
         listbox.insert(END, str(item))
     master.geometry("640x480")
@@ -79,8 +79,8 @@ def EditInf():
 def Purchasewin(user):
     def exit_btn():#exit function if user selects cash
 
-        topupscreen.destroy()
-        topupscreen.update()
+        PurWin.destroy()
+        PurWin.topupscreen.update()
 
     def checkout():
         global total
