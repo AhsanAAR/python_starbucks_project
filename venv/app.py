@@ -75,10 +75,9 @@ def ViewInf(user):
     sb.config(command=listbox.yview)
     listbox.pack()
 
-    listbox.insert(END, "User Name      /Password       /Name       /Address    /Telephone      /Email      /Starcard Number    /Credit     Dependant       /Points")
-
+    listbox.insert(END, "User Name/Password/Name/Address/Telephone/Email/Starcard Number/Credit/Dependant/Points(Tab Seperated)")
     for item in menulist:
-        listbox.insert(END, str(item))
+        listbox.insert(END, item.Str())
 
 
 def EditInf(user):
@@ -91,14 +90,14 @@ def EditInf(user):
     elif(user.m_type=='M'):
         menulist = [user] + [memberList] + [employeeList]
     def delete_entry():
-        q = int(listbox.curselection()[0])
+        q = int(listbox.curselection()[0]) - 1
         del menulist[which_selected()]
         listbox.delete(0, END)
         for item in menulist:
             listbox.insert(END, str(item))
 
     def update_entry():
-        q = int(listbox.curselection()[0])
+        q = int(listbox.curselection()[0]) - 1
         userr=menulist[q]
         signUpScreen = tk.Toplevel()
         d_name = StringVar()
@@ -155,8 +154,9 @@ def EditInf(user):
     b2.pack()
     if(user.m_type=="M"):
         b3.pack()
+    listbox.insert(END, "User Name/Password/Name/Address/Telephone/Email/Starcard Number/Credit/Dependant/Points(Tab Seperated)")
     for item in menulist:
-        listbox.insert(END, str(item))
+        listbox.insert(END, item.Str())
 
 def Purchasewin(user):
 

@@ -55,6 +55,10 @@ class web_user:
     def __str__(self):
         return '!'.join(map(str, [self.m_uName, self.m_password, self.m_fullName,self.m_address,self.m_telNum
                                   ,self.m_email,self.m_starCard.m_cardNum]))
+    def Str(self):
+        return '    '.join(map(str, [self.m_uName, self.m_password, self.m_fullName,self.m_address,self.m_telNum
+                                  ,self.m_email,self.m_starCard.m_cardNum]))
+
 
 class member(web_user):
     'Class respresnting members or customers on the portal'
@@ -66,6 +70,8 @@ class member(web_user):
 
     def __str__(self):
         return self.m_type + '!' + super().__str__() + '!' + '!'.join(map(str,['Y' if self.m_depends else 'N',self.m_points]))
+    def Str(self):
+        return self.m_type + '  ' + super().__str__() + '   ' + '   '.join(map(str,['Y' if self.m_depends else 'N',self.m_points]))
 
 class basic_empoyee(web_user):
     'Class respresnting a basic employee'
@@ -75,6 +81,9 @@ class basic_empoyee(web_user):
 
     def __str__(self):
         return self.m_type + '!' + super().__str__()
+    def Str(self):
+        return self.m_type + '  ' + super().__str__()
+
 
 
 class manager(web_user):
@@ -85,6 +94,8 @@ class manager(web_user):
 
     def __str__(self):
         return self.m_type + '!' + super().__str__()
+    def Str(self):
+        return self.m_type + '  ' + super().__str__()
 
 # function that converts WebUser.txt into object lists
 def loadRecords():
