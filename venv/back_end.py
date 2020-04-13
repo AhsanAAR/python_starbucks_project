@@ -118,6 +118,21 @@ def loadRecords():
             itemsList.append(shop_item(line[0],line[1]))
 
 
+def writeToFiles():
+    with open("Records.txt","w") as f:
+        [f.write(str(item) + '\n') for item in starCardList]
+        f.write('#' + '\n')
+        [f.write(str(item) + '\n') for item in memberList]
+        [f.write(str(item) + '\n') for item in employeeList]
+        [f.write(str(item) + '\n') for item in managerList]
+        f.write('#' + '\n')
+        [f.write(str(item) + '\n') for item in itemsList]
+    with open("WebUser.txt", "w") as f:
+        [f.write(item.m_uName + '!' + item.m_password + '\n') for item in memberList]
+        [f.write(item.m_uName + '!' + item.m_password + '\n') for item in employeeList]
+        [f.write(item.m_uName + '!' + item.m_password + '\n') for item in managerList]
+
+
 # method for making a new starCard with random Numbers
 def newStarCard():
     ret = star_card(0,0)
