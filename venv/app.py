@@ -4,7 +4,6 @@ import tkinter.messagebox
 from functools import partial
 from back_end import *
 
-loadRecords()
 k = 0
 total = 0
 
@@ -78,7 +77,6 @@ def ViewInf(user):
     listbox.insert(END, "User Name/Password/Name/Address/Telephone/Email/Starcard Number/Credit/Dependant/Points(Tab Seperated)")
     for item in menulist:
         listbox.insert(END, item.Str())
-
 
 def EditInf(user):
 
@@ -221,7 +219,6 @@ def Purchasewin(user):
         im = partial(addtocart, items, listbox)
         itemmenu.add_command(label=items.m_itemName + "  " + str(items.m_price), command=im)
 
-
 def getnewuserline(username, password, d_name, d_address, d_tel, d_email, d_snum, d_type):
     use = 0
     found = bool(False)
@@ -254,7 +251,6 @@ def getnewuserline(username, password, d_name, d_address, d_tel, d_email, d_snum
             managerList.append(use)
         tkinter.messagebox.showinfo("Creation", "User Created Successfully!")
         writeToFiles()
-
 
 def CreateUser():
     signUpScreen = tk.Toplevel()
@@ -316,7 +312,6 @@ def CreateUser():
     s_pass.grid(row=10)
     ok_Button.grid(row=13,column=8)
     signUpScreen.geometry("500x500")
-
 
 def Login(username, password):
     uName_found = False
@@ -396,30 +391,29 @@ def Login(username, password):
         crlabel.grid(row=8,column=2)
         success.geometry("500x500")
 
-loadRecords()
-login = Tk()
-loginf=Frame(login,width=240,height=240)
-loginf.pack()
-username = StringVar()
-password = StringVar()
-validatelogin = partial(Login, username, password)
-create = partial(CreateUser)
-L_UName=Label(loginf, text="Username ",bg="red", fg="white")
-L_Pass=Label(loginf, text="Password ",bg="red", fg="white")
-L_Img=PhotoImage(file="unnamed.png")
-L_login=Label(loginf, image=L_Img)
-E_UName= Entry(loginf,textvariable=username)
-E_Pass= Entry(loginf,textvariable=password,show="*")
-Q_Button = Button(loginf, text="Quit", fg="red", command=loginf.quit)
-L_Button=Button(loginf, text="Login", fg="blue",command=validatelogin)
-C_Button=Button(loginf, text="Create Account", fg="green",command=create)
-L_login.grid(row=0,column=1)
-L_UName.grid(row=1)
-L_Pass.grid(row=2)
-E_UName.grid(row=1, column=1)
-E_Pass.grid(row=2, column=1)
-Q_Button.grid(row=4)
-L_Button.grid(row=4, column=4)
-C_Button.grid(row=4, column=2)
-login.geometry("480x480")
-login.mainloop()
+def startUp():
+    login = Tk()
+    loginFrame = Frame(login,width=240,height=240)
+    loginFrame.pack()
+    usernameField = StringVar()
+    passwordField = StringVar()
+    L_UName = Label(loginFrame, text="Username ",bg="red", fg="white")
+    L_Pass = Label(loginFrame, text="Password ",bg="red", fg="white")
+    BackGroundImage = PhotoImage(file="unnamed.png")
+    L_login = Label(loginFrame, image=BackGroundImage)
+    E_UName = Entry(loginFrame,textvariable=usernameField)
+    E_Pass= Entry(loginFrame,textvariable=passwordField,show="*")
+    B_Quit = Button(loginFrame, text="Quit", fg="red",command=login.quit)
+    B_Login = Button(loginFrame, text="Login", fg="blue",command=lambda a=usernameField, b=passwordField:
+    Login(a, b))
+    B_Create = Button(loginFrame, text="Create Account", fg="green",command=CreateUser)
+    L_login.grid(row=0,column=1)
+    L_UName.grid(row=1)
+    L_Pass.grid(row=2)
+    E_UName.grid(row=1, column=1)
+    E_Pass.grid(row=2, column=1)
+    B_Quit.grid(row=4)
+    B_Login.grid(row=4, column=4)
+    B_Create.grid(row=4, column=2)
+    login.geometry("480x480")
+    login.mainloop()

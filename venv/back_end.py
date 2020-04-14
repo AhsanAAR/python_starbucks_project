@@ -1,7 +1,5 @@
 #this module stores all the functions and classes that handle the user's data and
 #the backend processing of the applications
-
-
 # lists to store all the different objects in our system
 memberList = []
 employeeList = []
@@ -59,7 +57,6 @@ class web_user:
         return '    '.join(map(str, [self.m_uName, self.m_password, self.m_fullName,self.m_address,self.m_telNum
                                   ,self.m_email,self.m_starCard.m_cardNum]))
 
-
 class member(web_user):
     'Class respresnting members or customers on the portal'
     def __init__(self, uName, password, fullName, address, telNum, email, starCardNum, depends, points):
@@ -83,8 +80,6 @@ class basic_empoyee(web_user):
         return self.m_type + '!' + super().__str__()
     def Str(self):
         return self.m_type + '  ' + super().Str()
-
-
 
 class manager(web_user):
     'Class respresnting a manager'
@@ -127,7 +122,6 @@ def loadRecords():
             line = line.split('!')
             itemsList.append(shop_item(line[0],line[1]))
 
-
 def writeToFiles():
     with open("Records.txt","w") as f:
         [f.write(str(item) + '\n') for item in starCardList]
@@ -141,7 +135,6 @@ def writeToFiles():
         [f.write(item.m_uName + '!' + item.m_password + '\n') for item in memberList]
         [f.write(item.m_uName + '!' + item.m_password + '\n') for item in employeeList]
         [f.write(item.m_uName + '!' + item.m_password + '\n') for item in managerList]
-
 
 # method for making a new starCard with random Numbers
 def newStarCard():
@@ -158,5 +151,3 @@ def newStarCard():
     ret.m_cardNum = rand
     ret.m_credit = 0
     return ret
-
-
