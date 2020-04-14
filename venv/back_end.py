@@ -71,7 +71,7 @@ class member(web_user):
     def __str__(self):
         return self.m_type + '!' + super().__str__() + '!' + '!'.join(map(str,['Y' if self.m_depends else 'N',self.m_points]))
     def Str(self):
-        return self.m_type + '  ' + super().__str__() + '   ' + '   '.join(map(str,['Y' if self.m_depends else 'N',self.m_points]))
+        return self.m_type + '  ' + super().Str() + '   ' + '   '.join(map(str,['Y' if self.m_depends else 'N',self.m_points]))
 
 class basic_empoyee(web_user):
     'Class respresnting a basic employee'
@@ -82,7 +82,7 @@ class basic_empoyee(web_user):
     def __str__(self):
         return self.m_type + '!' + super().__str__()
     def Str(self):
-        return self.m_type + '  ' + super().__str__()
+        return self.m_type + '  ' + super().Str()
 
 
 
@@ -95,7 +95,7 @@ class manager(web_user):
     def __str__(self):
         return self.m_type + '!' + super().__str__()
     def Str(self):
-        return self.m_type + '  ' + super().__str__()
+        return self.m_type + '  ' + super().Str()
 
 # function that converts WebUser.txt into object lists
 def loadRecords():

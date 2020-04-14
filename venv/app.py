@@ -93,6 +93,7 @@ def EditInf(user):
         q = int(listbox.curselection()[0]) - 1
         del menulist[which_selected()]
         listbox.delete(0, END)
+        listbox.insert(END,"User Name/Password/Name/Address/Telephone/Email/Starcard Number/Credit/Dependant/Points(Tab Seperated)")
         for item in menulist:
             listbox.insert(END, str(item))
 
@@ -113,6 +114,10 @@ def EditInf(user):
             userr.m_email = d_email.get()
             userr.m_password = passw.get()
             tkinter.messagebox.showinfo("Edit", "Details Updated Successfully")
+            listbox.delete(0, END)
+            listbox.insert(END,"User Name/Password/Name/Address/Telephone/Email/Starcard Number/Credit/Dependant/Points(Tab Seperated)")
+            for item in menulist:
+                listbox.insert(END, str(item))
             signUpScreen.destroy()
             signUpScreen.update()
 
@@ -163,8 +168,8 @@ def Purchasewin(user):
 
     def exit_btn():#exit function if user selects cash
 
-        topupscreen.destroy()
-        topupscreen.update()
+        PurWin.destroy()
+        PurWin.update()
 
 
     def checkout():
@@ -368,8 +373,6 @@ def Login(username, password):
         Edit = partial(EditInf, user)
         order = partial(Purchasewin, user)
         TopUp = partial(Topup, user)
-        lout = partial(Logout, user)
-        dele = partial(DeleteUser,user)
 
         def exit_btn():
             writeToFiles()
