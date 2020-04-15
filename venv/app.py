@@ -278,8 +278,6 @@ def Purchasewin():
             global profit
             profit += total
             total = 0
-            for u in memberList:
-                 u.m_profit += profit
             tkinter.messagebox.showinfo("Order Successful","Your Order Was Successful Please Wait While We PrePare It For You")
             tkinter.messagebox.showinfo("Remaining Balance","Your Remaining Balance is Dhs" + str(currentUser.m_starCard.m_credit))
             exit_btn()
@@ -442,6 +440,7 @@ def CreateUser():
 def activityPanel():
     global panelWindow
     global loginScreen
+    label_Profit=0
     panelWindow = tk.Toplevel()
     changePanel(loginScreen,panelWindow)
     panelWindow.protocol("WM_DELETE_WINDOW", lambda : logOut())
@@ -457,7 +456,7 @@ def activityPanel():
     label_welcome = Label(panelWindow, text="Welcome Back! ")
     label_credits = Label(panelWindow, text="Current Balance : " + str(currentUser.m_starCard.m_credit) + " Dhs ")
     if(currentUser.m_type == 'M'):
-        label_Profit = Label(panelWindow, text="Profit For The Current Day : " + str(currentUser.m_profit) + " Dhs ")
+        label_Profit = Label(panelWindow, text="Profit For The Current Day : " + str(profit) + " Dhs ")
     label_welcome.pack(pady = 10)
     button_viewInfo.pack(pady = 10)
     button_editInfo.pack(pady = 10)
