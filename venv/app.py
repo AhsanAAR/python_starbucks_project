@@ -146,9 +146,7 @@ def EditInf():
             if employeeList[i].m_uName == username:
                 del employeeList[i]
                 found = True
-        writeToFiles()
         editWindow.destroy()
-        writeToFiles()
         EditInf()
 
     def updateUser(selection):
@@ -157,7 +155,10 @@ def EditInf():
         username = listbox.get(selection)
         global editInfoBox
         editInfoBox = tk.Toplevel()
-        editWindow.protocol("WM_DELETE_WINDOW", lambda: changePanel(editInfoBox, editWindow, True))
+        def exitUpdateScreen():
+            editInfoBox.destroy()
+            EditInf()
+        editWindow.protocol("WM_DELETE_WINDOW", lambda: exitUpdateScreen())
         changePanel(editWindow, editInfoBox)
         found = False
         userr = None
@@ -179,8 +180,10 @@ def EditInf():
             if user.m_uName == username:
                 userr = user
                 found = True
+        UserName = StringVar()
+        UserName.set(userr.m_uName)
         Name = StringVar()
-        Name.set(userr.m_uName)
+        Name.set(userr.m_fullName)
         Address = StringVar()
         Address.set(userr.m_address)
         Telephone = StringVar()
@@ -191,6 +194,16 @@ def EditInf():
         password.set(userr.m_password)
 
         def udate():
+            if Name.get()=='' or Address.get()=='' or Telephone.get()=='' or Email.get() == '' or password.get()=='':
+                tkinter.messagebox.showinfo("Wrong Data", "No Empty Fields allowed")
+                return
+            if  UserName.get() != currentUser.m_uName:
+                for user in memberList + employeeList + managerList:
+                    if UserName.get() == user.m_uName:
+                        if count > 1:
+                            tkinter.messagebox.showinfo("Invalid", "This Username is already taken")
+                            return
+            userr.m_uName = UserName.get()
             userr.m_fullName = Name.get()
             userr.m_address = Address.get()
             userr.m_telNum = Telephone.get()
@@ -199,14 +212,15 @@ def EditInf():
             tkinter.messagebox.showinfo("Edit", "Details Updated Successfully")
             editInfoBox.destroy()
             editWindow.destroy()
-            writeToFiles()
             EditInf()
 
+        label_uName = Label(editInfoBox, text="User Name : ")
         label_Name = Label(editInfoBox, text="Name : ")
         label_Address = Label(editInfoBox, text="Address : ")
         label_TelNum = Label(editInfoBox, text="Tel : ")
         label_Email = Label(editInfoBox, text="E-Mail : ")
         label_Pass = Label(editInfoBox, text="Password : ")
+        uNameField = Entry(editInfoBox, textvariable = UserName)
         nameField = Entry(editInfoBox, textvariable=Name)
         addressField = Entry(editInfoBox, textvariable=Address)
         telNumField = Entry(editInfoBox, textvariable=Telephone)
@@ -222,6 +236,8 @@ def EditInf():
         telNumField.grid(row=4, column=2)
         eMailField.grid(row=5, column=2)
         if username == currentUser.m_uName:
+            label_uName.grid(row=1)
+            uNameField.grid(row=1, column=2)
             passwordField.grid(row=10, column=2)
             label_Pass.grid(row=10)
         ok_Button.grid(row=13, column=8)
@@ -255,7 +271,6 @@ def Purchasewin():
         PurWin.destroy()
         activityPanel()
 
-
     def checkout():
         global total
         if(currentUser.m_starCard.m_credit>=total):
@@ -267,7 +282,6 @@ def Purchasewin():
             tkinter.messagebox.showinfo("Order UnsuccessFul","Your Order Could Not Preceed Due to Insufficient Funds")
             tkinter.messagebox.showinfo("TidBid","TopUp Your Account And Try Again")
             exit_btn()
-
 
     def addtocart(items, listbox):
         global k
@@ -291,8 +305,6 @@ def Purchasewin():
         if k == 0:
             k += 1
         return
-
-
     f1 = Frame(PurWin, width=200, height=200)
     f2 = Frame(PurWin, width=200, height=200)
     f1.grid(row=0)
@@ -314,108 +326,121 @@ def Purchasewin():
         im = partial(addtocart, items, listbox)
         itemmenu.add_command(label=items.m_itemName + "  " + str(items.m_price), command=im)
 
-def getnewuserline(username, password, d_name, d_address, d_tel, d_email, d_snum, d_type):
-    use = 0
-    found = bool(False)
-    name =d_name.get()
-    address = d_address.get()
-    tel = d_tel.get()
-    email = d_email.get()
-    snum = d_snum
-    type=d_type
-    uname=username.get()
-    passw=password.get()
-    with open("WebUser.txt", "r") as f:
-        for line in f:
-            if (line.find(uname) != -1):
-                found = True
-            if (found):
-                break
-    if (found):
-        tkinter.messagebox.showinfo("UserName Taken", "Username Already Exist in database Try Login Or Use Different Username")
-    else:
-        tkinter.messagebox.showinfo("Creation", "Username is available!")
-        if(d_type=='C'):
-            use=member(uname,passw,name,address,tel,email,snum,'N','0')
-            memberList.append(use)
-        elif(d_type=='E'):
-            use=basic_empoyee(uname,passw,name,address,tel,email,snum)
-            employeeList.append(use)
-        else:
-            use=manager(uname,passw,name,address,tel,email,snum)
-            managerList.append(use)
-        tkinter.messagebox.showinfo("Creation", "User Created Successfully!")
-        writeToFiles()
-
 def CreateUser():
-    signUpScreen = tk.Toplevel()
-    d_name = StringVar()
-    d_address = StringVar()
-    d_tel = StringVar()
-    d_email = StringVar()
-    r=newStarCard()
-    starCardList.append(r)
-    d_snum =r.m_cardNum
-    d_type = ""
-    un=StringVar()
-    passw=StringVar()
-    createu = partial(getnewuserline, un, passw, d_name, d_address, d_tel, d_email, d_snum, d_type)
-    i=int(0)
+    signUpWindow = tk.Toplevel()
+    global loginScreen
+
+    type = 'E'
+
+    changePanel(loginScreen,signUpWindow)
+    signUpWindow.protocol("WM_DELETE_WINDOW", lambda: changePanel(signUpWindow,loginScreen,True))
+
+    UserNameString = StringVar()
+    NameString = StringVar()
+    AddressString = StringVar()
+    TeleNumString = StringVar()
+    EmailString = StringVar()
+    passwordString = StringVar()
+    TypeString = StringVar()
+    TypeString.set('Employee')
+
+    label_uName = Label(signUpWindow, text="User Name : ")
+    label_Name = Label(signUpWindow, text="Name : ")
+    label_Address = Label(signUpWindow, text="Address : ")
+    label_TeleNum = Label(signUpWindow, text="Tel : ")
+    label_Email = Label(signUpWindow, text="E-Mail : ")
+    label_Password = Label(signUpWindow, text="Password :  ")
+    label_Type = Label(signUpWindow, text="Type :  ")
+
+    uNameField = Entry(signUpWindow, textvariable=UserNameString)
+    NameField = Entry(signUpWindow, textvariable=NameString)
+    AddressField = Entry(signUpWindow, textvariable=AddressString)
+    TelNumField = Entry(signUpWindow, textvariable=TeleNumString)
+    EmailField = Entry(signUpWindow, textvariable=EmailString)
+    PasswordField = Entry(signUpWindow, textvariable=passwordString)
+    TypeField = Entry(signUpWindow, textvariable = TypeString, state = 'disabled')
+
+    button_Employee = Button(signUpWindow, text="Employee", command=lambda : sete())
+    button_Manger = Button(signUpWindow, text="Manager", command=lambda : setm())
+    button_Customer = Button(signUpWindow, text="Customer", command=lambda : setc())
+
+    label_uName.grid(row = 1)
+    label_Name.grid(row=2)
+    label_Address.grid(row=3)
+    label_TeleNum.grid(row=4)
+    label_Email.grid(row=5)
+    label_Password.grid(row = 6)
+    label_Type.grid(row = 7)
+
+    uNameField.grid(row=1,column=2)
+    NameField.grid(row=2, column=2)
+    AddressField.grid(row=3, column=2)
+    TelNumField.grid(row=4, column=2)
+    EmailField.grid(row=5, column=2)
+    PasswordField.grid(row=6, column=2)
+    TypeField.grid(row=7,column=2)
+
+    button_Employee.grid(row=7, column=3)
+    button_Manger.grid(row=7, column=4)
+    button_Customer.grid(row=7, column=5)
+
+    ok_Button = Button(signUpWindow, text="Ok",command= lambda : addUser())
+    ok_Button.grid(row=13, column=3)
+    signUpWindow.geometry("500x500")
+
+    def addUser():
+        global currentUser
+        if (UserNameString.get() == '' or NameString.get() == '' or AddressString.get() == ''
+                or TeleNumString.get() == '' or EmailString.get() == '' or
+                PasswordField.get() == '' or type == ''):
+            tkinter.messagebox.showinfo("Invalid","No Blank Fields Allowed")
+            return
+        for user in memberList + employeeList + managerList:
+            if user.m_uName == uNameField.get():
+                tkinter.messagebox.showinfo("Wrong Username", "This Uesrname is already in use")
+                return
+        myStarCard = newStarCard()
+        starCardList.append(myStarCard)
+        if type == 'C':
+            currentUser = member(UserNameString.get(), passwordString.get(), NameString.get(), AddressString.get(),
+                                 TeleNumString.get(), EmailString.get(), myStarCard.m_cardNum, False, 0)
+            memberList.append(currentUser)
+        elif type == 'E':
+            currentUser = basic_employee(UserNameString.get(), passwordString.get(), NameString.get(), AddressString.get(),
+                                 TeleNumString.get(), EmailString.get(), myStarCard.m_cardNum)
+            employeeList.append(currentUser)
+        else:
+            currentUser = manager(UserNameString.get(), passwordString.get(), NameString.get(),
+                                         AddressString.get(),
+                                         TeleNumString.get(), EmailString.get(), myStarCard.m_cardNum)
+            managerList.append(currentUser)
+        tkinter.messagebox.showinfo("User Created", "Your Account has Successfully been Crated. Login with your details")
+        writeToFiles()
+        changePanel(signUpWindow, loginScreen, True)
+
     def sete():
-        d_type = 'E'
+        global type
+        type = 'E'
+        TypeString.set('Employee')
+
     def setc():
-        d_type = 'C'
+        global type
+        type = 'C'
+        TypeString.set('Customer')
+
     def setm():
-        d_type = 'M'
-    s_name = Label(signUpScreen, text="Name : " )
-    s_address = Label(signUpScreen, text="Address : ")
-    s_tel = Label(signUpScreen, text="Tel : ")
-    s_email = Label(signUpScreen, text="E-Mail : ")
-    s_snum = Label(signUpScreen, text="StarCard : ")
-    s_type = Label(signUpScreen, text="Type : ")
-    s_uname=Label(signUpScreen, text="UserName :  ")
-    s_pass = Label(signUpScreen, text="Password :  ")
-    e_name = Entry(signUpScreen, textvariable=d_name)
-    e_address = Entry(signUpScreen, textvariable=d_address)
-    e_tel = Entry(signUpScreen, textvariable=d_tel)
-    e_email = Entry(signUpScreen, textvariable=d_email)
-    e_type = Button(signUpScreen, text="Employee",command=sete)
-    m_type = Button(signUpScreen, text="Manager",command=setm)
-    c_type = Button(signUpScreen, text="Customer",command=setc)
-    e_un = Entry(signUpScreen, textvariable=un)
-    e_pass = Entry(signUpScreen, show='*',textvariable=passw)
-    ok_Button = Button(signUpScreen, text="Ok",command=createu)
-    s_name.grid(row=2)
-    s_address.grid(row=3)
-    s_tel.grid(row=4)
-    s_email.grid(row=5)
-    s_snum.grid(row=6)
-    s_credit.grid(row=7)
-    s_type.grid(row=8)
-    e_name.grid(row=2,column=2)
-    e_address.grid(row=3,column=2)
-    e_tel.grid(row=4,column=2)
-    e_email.grid(row=5,column=2)
-    e_snum.grid(row=6,column=2)
-    e_credit.grid(row=7,column=2)
-    e_type.grid(row=8,column=2)
-    m_type.grid(row=8, column=3)
-    c_type.grid(row=8, column=4)
-    e_un.grid(row=9, column=2)
-    e_pass.grid(row=10, column=2)
-    s_uname.grid(row=9)
-    s_pass.grid(row=10)
-    ok_Button.grid(row=13,column=8)
-    signUpScreen.geometry("500x500")
+        global type
+        type = 'M'
+        TypeString.set('Manager')
 
 def activityPanel():
     global panelWindow
     global loginScreen
     panelWindow = tk.Toplevel()
     changePanel(loginScreen,panelWindow)
-    panelWindow.protocol("WM_DELETE_WINDOW", lambda : changePanel(panelWindow,loginScreen,True))
+    panelWindow.protocol("WM_DELETE_WINDOW", lambda : logOut())
     def logOut():
-        tkinter.messagebox.showinfo("Logout", "Successfully Logged Out Of System Please Sign In Again")
+        writeToFiles()
         changePanel(panelWindow,loginScreen,True)
 
     button_viewInfo = Button(panelWindow, text="View Info", command = lambda : ViewInf())

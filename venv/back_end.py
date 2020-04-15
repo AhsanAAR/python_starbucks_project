@@ -78,10 +78,10 @@ class member(web_user):
     def Str(self):
         return ['Customer'] + super().Str() + ['Yes' if self.m_depends else 'No', str(self.m_points)]
 
-class basic_empoyee(web_user):
+class basic_employee(web_user):
     'Class respresnting a basic employee'
     def __init__(self, uName, password, fullName, address, telNum, email, starCardNum):
-        super(basic_empoyee, self).__init__(uName, password, fullName, address, telNum, email, starCardNum)
+        super(basic_employee, self).__init__(uName, password, fullName, address, telNum, email, starCardNum)
         self.m_type = 'E'
 
     def __str__(self):
@@ -110,6 +110,7 @@ class manager(web_user):
 # function that converts WebUser.txt into object lists
 def loadRecords():
     # opens the file in read mode
+    print('Loading from files')
     with open("Records.txt","r") as f:
         # loop for loading starCards
         for line in f:
@@ -128,7 +129,7 @@ def loadRecords():
                 memberList.append(member(line[1],line[2],line[3],line[4],line[5],line[6],line[7],True if line[8] == 'Y' else False
                                          ,line[9]))
             elif line[0] == 'E':
-                employeeList.append(basic_empoyee(line[1],line[2],line[3],line[4],line[5],line[6],line[7]))
+                employeeList.append(basic_employee(line[1],line[2],line[3],line[4],line[5],line[6],line[7]))
             elif line[0] == 'M':
                 managerList.append(manager(line[1],line[2],line[3],line[4],line[5],line[6],line[7]))
         # loop for loading shop items
@@ -138,6 +139,7 @@ def loadRecords():
             itemsList.append(shop_item(line[0],line[1]))
 
 def writeToFiles():
+    print('writing to files')
     with open("Records.txt","w") as f:
         [f.write(str(item) + '\n') for item in starCardList]
         f.write('#' + '\n')
