@@ -1,5 +1,5 @@
 10000001!100804.59999999999
-37771563!2000.0
+37771563!1902.5
 78118508!0.0
 51469463!564645.0
 69329512!0.0
@@ -11,7 +11,7 @@ E!newManager!new!Ali Imran!hello bello!033165!askfjd!51469463
 E!hello!hello!hello!hello!hello!heloo!69329512
 E!manager!hello!hello!hello!hello!hello!44062844
 M!Abba!yourokok!Mr Manager Boi!nai betana!wot de hell!033165373!10000001
-M!ali69!alialiali!Ali Faraz!6969-Beverly Hills!033169696969!aliboi@gmail.com!10735307
+M!ali69!alialiali!Ali Faraz!6969-Beverly Hills!033169696969!aliboi@gmail.com!92350795
 #
 Cappuccino!100
 Latte!130
