@@ -4,10 +4,6 @@
 51469463!564645.0
 69329512!0.0
 44062844!0.0
-<<<<<<< HEAD
-=======
-10735307!0
->>>>>>> c75ced454365e93397729bd5d0cd71ab3b76f831
 #
 E!test!test!test!test!test!test!37771563
 E!test123!test!test!test!test!test!78118508
