@@ -6,18 +6,28 @@ from back_end import *
 
 k = 0
 total = 0
+currentUser = None
+loginScreen = None
+panelWindow = None
+ViewWindow = None
+editWindow = None
+editInfoBox = None
 
-def Topup(user):
+
+def Topup():
+    global currentUser
+    global panelWindow
     topupscreen=tk.Toplevel()#creation of topup screen and dimention of topup scren
+    topupscreen.protocol("WM_DELETE_WINDOW", lambda: exit_btn())
+    changePanel(panelWindow, topupscreen, True)
     def exit_btn():#exit function if user selects cash
-
+        activityPanel()
         topupscreen.destroy()
-        topupscreen.update()
     def exit_btn2():#exit function if user Successfully Completes Topup
-
-        user.m_starCard.m_credit+=int(credit.get())
+        currentUser.m_starCard.m_credit+=int(credit.get())
         tkinter.messagebox.showinfo("Top Up Successful", "Your StarCard Has Benn Top Up With "+credit.get()+ " Dhs via Credit Card Number "+creditcardNum.get())
         topupscreen.destroy()
+        activityPanel()
         topupscreen.update()
 
     def casho():#Cash function for Cash Button
@@ -44,8 +54,8 @@ def Topup(user):
     #As The Button Gets Called The Widgets Are oriented Accordingly
 
 
-    if(user.m_type=='C'):
-        if(user.m_depends):
+    if(currentUser.m_type=='C'):
+        if(currentUser.m_depends):
             tkinter.messagebox.showinfo("Dependant Card", "Please Ask Your Dependant Card To Top Up!")
             exit_btn()
         else:
@@ -58,124 +68,200 @@ def Topup(user):
         B_credit.grid(row=2, column=2)
     topupscreen.geometry("640x480")
 
-def ViewInf(user):
-    master = tk.Toplevel()
-    master.geometry("640x480")
-    menulist = 0
-    if (user.m_type == 'C'):
-        menulist = [user]
-    elif (user.m_type == 'E'):
-        menulist = [user] + memberList
-    elif (user.m_type == 'M'):
-        menulist = [user] + memberList + employeeList
-    sb = Scrollbar(master, orient=VERTICAL)
-    sb.pack(side=RIGHT, fill=Y)
-    listbox = Listbox(master,width=300, height=20, yscrollcommand=sb.set)
-    sb.config(command=listbox.yview)
-    listbox.pack()
+def ViewInf():
+    global ViewWindow
+    global panelWindow
+    global currentUser
+    ViewWindow = Tk()
+    ViewWindow.protocol("WM_DELETE_WINDOW", lambda: changePanel(ViewWindow, panelWindow, True))
+    changePanel(panelWindow,ViewWindow)
+    ViewWindow.geometry("640x480")
+    editList = 0
+    if currentUser.m_type == 'C':
+        editList = [currentUser]
+    elif currentUser.m_type == 'E':
+        editList = [currentUser] + memberList
+    elif currentUser.m_type == 'M':
+        editList = [currentUser] + memberList + employeeList
+    def populate(frame):
+        col = ['Type','Username','FullName','Address','TelePhoneNumber','E mail','StarCard','Depends','Points']
+        for i in range(len(col)):
+            t = Label(frame,text = col[i])
+            t.grid(row = 0, column = i, padx = 5, pady = 2)
+        for i in range(len(editList)):
+            col = editList[i].Str()
+            for j in range(len(col)):
+                Label(frame, text = col[j]).grid(row=1+i, column=j, padx = 5, pady = 2)
 
-    listbox.insert(END, "User Name/Password/Name/Address/Telephone/Email/Starcard Number/Credit/Dependant/Points(Tab Seperated)")
-    for item in menulist:
-        listbox.insert(END, item.Str())
+    def onFrameConfigure(canvas):
+        '''Reset the scroll region to encompass the inner frame'''
+        canvas.configure(scrollregion=canvas.bbox("all"))
 
-def EditInf(user):
+    canvas = tk.Canvas(ViewWindow, borderwidth=0, background="#ffffff")
+    frame = tk.Frame(canvas, background="#ffffff")
+    vsb = tk.Scrollbar(ViewWindow, orient="vertical", command=canvas.yview)
+    hsb = tk.Scrollbar(ViewWindow, orient="horizontal", command=canvas.xview)
+    canvas.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
 
-    menulist=0
-    if(user.m_type=='C'):
-        menulist=[user]
-    elif(user.m_type=='E'):
-        menulist=[user]+memberList
-    elif(user.m_type=='M'):
-        menulist = [user] + [memberList] + [employeeList]
-    def delete_entry():
-        q = int(listbox.curselection()[0]) - 1
-        del menulist[which_selected()]
-        listbox.delete(0, END)
-        listbox.insert(END,"User Name/Password/Name/Address/Telephone/Email/Starcard Number/Credit/Dependant/Points(Tab Seperated)")
-        for item in menulist:
-            listbox.insert(END, str(item))
+    vsb.pack(side="right", fill="y")
+    hsb.pack(side="bottom", fill="x")
+    canvas.pack(side="left", fill="both", expand=True)
+    canvas.create_window((4, 4), window=frame, anchor="nw")
 
-    def update_entry():
-        q = int(listbox.curselection()[0]) - 1
-        userr=menulist[q]
-        signUpScreen = tk.Toplevel()
-        d_name = StringVar()
-        d_address = StringVar()
-        d_tel = StringVar()
-        d_email = StringVar()
-        passw = StringVar()
+    frame.bind("<Configure>", lambda event, canvas=canvas: onFrameConfigure(canvas))
+
+    populate(frame)
+
+def EditInf():
+    global currentUser
+    global panelWindow
+    global editWindow
+    editWindow = tk.Toplevel()
+    editWindow.protocol("WM_DELETE_WINDOW", lambda: changePanel(editWindow, panelWindow, True))
+    changePanel(panelWindow, editWindow)
+    editList=0
+    if currentUser.m_type=='C':
+        editList=[currentUser]
+    elif currentUser.m_type=='E':
+        editList=[currentUser]+memberList
+    elif currentUser.m_type=='M':
+        editList = [currentUser] + memberList + employeeList
+
+    def deleteUser(selection):
+        if selection == (0,):
+            return
+        username = listbox.get(selection)
+        if currentUser.m_uName == username:
+            return
+        found = False
+        for i in range(len(memberList)):
+            if found:
+                break
+            if memberList[i].m_uName == username:
+                del memberList[i]
+                found = True
+        for i in range(len(employeeList)):
+            if found:
+                break
+            if employeeList[i].m_uName == username:
+                del employeeList[i]
+                found = True
+        writeToFiles()
+        editWindow.destroy()
+        writeToFiles()
+        EditInf()
+
+    def updateUser(selection):
+        if selection == (0,):
+            return
+        username = listbox.get(selection)
+        global editInfoBox
+        editInfoBox = tk.Toplevel()
+        editWindow.protocol("WM_DELETE_WINDOW", lambda: changePanel(editInfoBox, editWindow, True))
+        changePanel(editWindow, editInfoBox)
+        found = False
+        userr = None
+        for user in managerList:
+            if found:
+                break
+            if user.m_uName == username:
+                userr = user
+                found = True
+        for user in memberList:
+            if found:
+                break
+            if user.m_uName == username:
+                userr = user
+                found = True
+        for user in employeeList:
+            if found:
+                break
+            if user.m_uName == username:
+                userr = user
+                found = True
+        Name = StringVar()
+        Name.set(userr.m_uName)
+        Address = StringVar()
+        Address.set(userr.m_address)
+        Telephone = StringVar()
+        Telephone.set(userr.m_telNum)
+        Email = StringVar()
+        Email.set(userr.m_email)
+        password = StringVar()
+        password.set(userr.m_password)
 
         def udate():
-            userr.m_fullName = d_name.get()
-            userr.m_address = d_address.get()
-            userr.m_telNum = d_tel.get()
-            userr.m_email = d_email.get()
-            userr.m_password = passw.get()
+            userr.m_fullName = Name.get()
+            userr.m_address = Address.get()
+            userr.m_telNum = Telephone.get()
+            userr.m_email = Email.get()
+            userr.m_password = password.get()
             tkinter.messagebox.showinfo("Edit", "Details Updated Successfully")
-            listbox.delete(0, END)
-            listbox.insert(END,"User Name/Password/Name/Address/Telephone/Email/Starcard Number/Credit/Dependant/Points(Tab Seperated)")
-            for item in menulist:
-                listbox.insert(END, str(item))
-            signUpScreen.destroy()
-            signUpScreen.update()
+            editInfoBox.destroy()
+            editWindow.destroy()
+            writeToFiles()
+            EditInf()
 
-        s_name = Label(signUpScreen, text="Name : ")
-        s_address = Label(signUpScreen, text="Address : ")
-        s_tel = Label(signUpScreen, text="Tel : ")
-        s_email = Label(signUpScreen, text="E-Mail : ")
-        s_pass = Label(signUpScreen, text="Password : ")
-        e_name = Entry(signUpScreen, textvariable=d_name)
-        e_address = Entry(signUpScreen, textvariable=d_address)
-        e_tel = Entry(signUpScreen, textvariable=d_tel)
-        e_email = Entry(signUpScreen, textvariable=d_email)
-        e_pass = Entry(signUpScreen, show='*', textvariable=passw)
-        ok_Button = Button(signUpScreen, text="Ok", command=udate)
-        s_name.grid(row=2)
-        s_address.grid(row=3)
-        s_tel.grid(row=4)
-        s_email.grid(row=5)
-        e_name.grid(row=2, column=2)
-        e_address.grid(row=3, column=2)
-        e_tel.grid(row=4, column=2)
-        e_email.grid(row=5, column=2)
-        e_pass.grid(row=10, column=2)
-        s_pass.grid(row=10)
+        label_Name = Label(editInfoBox, text="Name : ")
+        label_Address = Label(editInfoBox, text="Address : ")
+        label_TelNum = Label(editInfoBox, text="Tel : ")
+        label_Email = Label(editInfoBox, text="E-Mail : ")
+        label_Pass = Label(editInfoBox, text="Password : ")
+        nameField = Entry(editInfoBox, textvariable=Name)
+        addressField = Entry(editInfoBox, textvariable=Address)
+        telNumField = Entry(editInfoBox, textvariable=Telephone)
+        eMailField = Entry(editInfoBox, textvariable=Email)
+        passwordField = Entry(editInfoBox, textvariable=password)
+        ok_Button = Button(editInfoBox, text="Ok", command=udate)
+        label_Name.grid(row=2)
+        label_Address.grid(row=3)
+        label_TelNum.grid(row=4)
+        label_Email.grid(row=5)
+        nameField.grid(row=2, column=2)
+        addressField.grid(row=3, column=2)
+        telNumField.grid(row=4, column=2)
+        eMailField.grid(row=5, column=2)
+        if username == currentUser.m_uName:
+            passwordField.grid(row=10, column=2)
+            label_Pass.grid(row=10)
         ok_Button.grid(row=13, column=8)
-        signUpScreen.geometry("500x500")
+        editInfoBox.geometry("500x500")
 
-    master = tk.Toplevel()
-    f1 = Frame(master, width=200, height=200)
-    f2 = Frame(master, width=200, height=200)
+    f1 = Frame(editWindow, width=200, height=200)
+    f2 = Frame(editWindow, width=200, height=200)
     f1.grid(row=0)
     f2.grid(row=1)
     sb = Scrollbar(f1, orient=VERTICAL)
     sb.pack(side=RIGHT, fill=Y)
     listbox = Listbox(f1, width=100, height=20, yscrollcommand=sb.set)
-    b2 = Button(f2, text="Edit", command=update_entry)
-    b3 = Button(f2, text="Delete", command=delete_entry)
+    b2 = Button(f2, text="Edit", command= lambda : updateUser(listbox.curselection()))
+    b3 = Button(f2, text="Delete", command= lambda : deleteUser((listbox.curselection())))
     listbox.pack()
     b2.pack()
-    if(user.m_type=="M"):
+    if(currentUser.m_type=="M"):
         b3.pack()
-    listbox.insert(END, "User Name/Password/Name/Address/Telephone/Email/Starcard Number/Credit/Dependant/Points(Tab Seperated)")
-    for item in menulist:
-        listbox.insert(END, item.Str())
+    listbox.insert(END, "UserName")
+    for user in editList:
+        listbox.insert(END, user.m_uName)
 
-def Purchasewin(user):
-
+def Purchasewin():
+    global currentUser
+    global panelWindow
+    PurWin = tk.Toplevel()
+    PurWin.protocol("WM_DELETE_WINDOW", lambda: exit_btn())
+    changePanel(panelWindow, PurWin, True)
 
     def exit_btn():#exit function if user selects cash
-
         PurWin.destroy()
-        PurWin.update()
+        activityPanel()
 
 
     def checkout():
         global total
-        if(user.m_starCard.m_credit>=total):
-            user.m_starCard.m_credit -= total
+        if(currentUser.m_starCard.m_credit>=total):
+            currentUser.m_starCard.m_credit -= total
             tkinter.messagebox.showinfo("Order Successful","Your Order Was Successful Please Wait While We PrePare It For You")
-            tkinter.messagebox.showinfo("Remaining Balance","Your Remaining Balance is Dhs" + str(user.m_starCard.m_credit))
+            tkinter.messagebox.showinfo("Remaining Balance","Your Remaining Balance is Dhs" + str(currentUser.m_starCard.m_credit))
             exit_btn()
         else:
             tkinter.messagebox.showinfo("Order UnsuccessFul","Your Order Could Not Preceed Due to Insufficient Funds")
@@ -185,7 +271,9 @@ def Purchasewin(user):
 
     def addtocart(items, listbox):
         global k
-        if (k != 0):
+        if k != 0:
+            listbox.delete(END)
+            listbox.delete(END)
             listbox.delete(END)
         global total
         total += items.m_price
@@ -193,11 +281,18 @@ def Purchasewin(user):
         listbox.insert(END, i)
         j = "Total : " + str(total)+" Dhs"
         listbox.insert(END, j)
-        if (k == 0):
+        disc = currentUser.discount()
+        discprice = total * disc / 100
+        j = "After : " + str(disc) + " % discount of " + str(discprice)
+        listbox.insert(END, j)
+        total = total - discprice
+        j = "SubTotal : " + str(total)
+        listbox.insert(END, j)
+        if k == 0:
             k += 1
         return
 
-    PurWin = tk.Toplevel()
+
     f1 = Frame(PurWin, width=200, height=200)
     f2 = Frame(PurWin, width=200, height=200)
     f1.grid(row=0)
@@ -313,107 +408,97 @@ def CreateUser():
     ok_Button.grid(row=13,column=8)
     signUpScreen.geometry("500x500")
 
-def Login(username, password):
-    uName_found = False
-    pass_found = False
-    d_uname = username.get()
-    d_pass = password.get()
+def activityPanel():
+    global panelWindow
+    global loginScreen
+    panelWindow = tk.Toplevel()
+    changePanel(loginScreen,panelWindow)
+    panelWindow.protocol("WM_DELETE_WINDOW", lambda : changePanel(panelWindow,loginScreen,True))
+    def logOut():
+        tkinter.messagebox.showinfo("Logout", "Successfully Logged Out Of System Please Sign In Again")
+        changePanel(panelWindow,loginScreen,True)
 
-    if d_uname == '' or d_pass == '':
+    button_viewInfo = Button(panelWindow, text="View Info", command = lambda : ViewInf())
+    button_editInfo = Button(panelWindow, text="Edit Info", command = lambda : EditInf())
+    button_purchase = Button(panelWindow, text="Make An Order", command = lambda : Purchasewin())
+    button_LogOut = Button(panelWindow, text="Logout", command = lambda : logOut())
+    button_TopUp = Button(panelWindow, text="TopUp Star Card", command = lambda : Topup())
+    label_welcome = Label(panelWindow, text="Welcome Back! ")
+    label_credits = Label(panelWindow, text="Current Balance : " + str(currentUser.m_starCard.m_credit) + " Dhs ")
+    label_welcome.pack(pady = 10)
+    button_viewInfo.pack(pady = 10)
+    button_editInfo.pack(pady = 10)
+    button_purchase.pack(pady = 10)
+    button_TopUp.pack(pady = 10)
+    button_LogOut.pack(pady = 10)
+    label_credits.pack(pady = 10)
+    panelWindow.geometry("500x500")
+
+def changePanel(first,second, destroy = False):
+    first.withdraw()
+    second.deiconify()
+    if destroy:
+        first.destroy()
+
+def checkLogInData(username, password):
+    found_username = False
+    found_password = False
+
+    if username == '' or password == '':
         tkinter.messagebox.showinfo("Wrong Input", "No blank fields are allowed")
         return
+    # finds the username and password in Records.txt
     with open("WebUser.txt", "r") as f:
         for line in f:
             line = line[:-1]
             line = line.split('!')
-            if d_uname == line[0]:
-                uName_found = True
-                if d_pass == line[1]:
-                    pass_found = True
+            if username == line[0]:
+                found_username = True
+                if password == line[1]:
+                    found_password = True
                 break
-    if(not uName_found):
+    if not found_username:
         tkinter.messagebox.showinfo("Login", "UserName Does Not Exist Taking to Signup")
         CreateUser()
-    elif(not pass_found):
+    elif not found_password:
         tkinter.messagebox.showinfo("Login Failed", "Password Does not Match")
-    else:
+    else: # the username and password have been found
         tkinter.messagebox.showinfo("Login", "Login SuccessFull")
         found = False
-
-        user = 0
-
-        for find_user in memberList:
+        # find the object for the username and password
+        for find_user in memberList + employeeList + managerList:
             if found:
                 break
-            if d_uname == find_user.m_uName:
-                user = find_user
+            if username == find_user.m_uName:
+                global currentUser
+                currentUser = find_user
                 found = True
+        activityPanel()
 
-        for find_user in employeeList:
-            if found:
-                break
-            if d_uname == find_user.m_uName:
-                user = find_user
-                found = True
-
-        for find_user in managerList:
-            if found:
-                break
-            if d_uname == find_user.m_uName:
-                user = find_user
-                found = True
-
-        success = tk.Toplevel()
-        View = partial(ViewInf,user)
-        Edit = partial(EditInf, user)
-        order = partial(Purchasewin, user)
-        TopUp = partial(Topup, user)
-
-        def exit_btn():
-            writeToFiles()
-            tkinter.messagebox.showinfo("Logout","Successfully Logged Out Of System Please Sign In Again")
-            success.destroy()
-            success.update()
-
-        view = Button(success, text="View Info",command=View)
-        edit = Button(success, text="Edit Info", command=Edit)
-        purchase = Button(success, text="Make An Order", command=order)
-        loguot = Button(success, text="Logout", command=exit_btn)
-        topup = Button(success, text="TopUp Star Card", command=TopUp)
-        Welcome = Label(success, text="Welcome Back! " + user.m_uName)
-        Welcome.grid(row=1,column=2)
-        view.grid(row=2, column=2)
-        edit.grid(row=3, column=2)
-        purchase.grid(row=4, column=2)
-        topup.grid(row=5,column=2)
-        loguot.grid(row=6, column=2)
-        crlabel=Label(success,text="Current Balance : "+ str(user.m_starCard.m_credit)+" Dhs ")
-        crlabel.grid(row=8,column=2)
-        success.geometry("500x500")
-
+#the main Login Screen loop
 def startUp():
-    login = Tk()
-    loginFrame = Frame(login,width=240,height=240)
+    global loginScreen
+    loginScreen = Tk()
+    loginFrame = Frame(loginScreen,width=240,height=240)
     loginFrame.pack()
-    usernameField = StringVar()
-    passwordField = StringVar()
-    L_UName = Label(loginFrame, text="Username ",bg="red", fg="white")
-    L_Pass = Label(loginFrame, text="Password ",bg="red", fg="white")
-    BackGroundImage = PhotoImage(file="unnamed.png")
-    L_login = Label(loginFrame, image=BackGroundImage)
-    E_UName = Entry(loginFrame,textvariable=usernameField)
-    E_Pass= Entry(loginFrame,textvariable=passwordField,show="*")
-    B_Quit = Button(loginFrame, text="Quit", fg="red",command=login.quit)
-    B_Login = Button(loginFrame, text="Login", fg="blue",command=lambda a=usernameField, b=passwordField:
-    Login(a, b))
-    B_Create = Button(loginFrame, text="Create Account", fg="green",command=CreateUser)
-    L_login.grid(row=0,column=1)
-    L_UName.grid(row=1)
-    L_Pass.grid(row=2)
-    E_UName.grid(row=1, column=1)
-    E_Pass.grid(row=2, column=1)
-    B_Quit.grid(row=4)
-    B_Login.grid(row=4, column=4)
-    B_Create.grid(row=4, column=2)
-    login.geometry("480x480")
-    login.mainloop()
+    username = StringVar()
+    password = StringVar()
+    label_username = Label(loginFrame, text="Username ",bg="red", fg="white")
+    label_password = Label(loginFrame, text="Password ",bg="red", fg="white")
+    backImage = PhotoImage(file="unnamed.png")
+    label_login = Label(loginFrame, image=backImage)
+    usernameField = Entry(loginFrame,textvariable=username)
+    passwordField= Entry(loginFrame,textvariable=password,show="*")
+    button_quit = Button(loginFrame, text="Quit", fg="red",command=loginScreen.quit)
+    button_login = Button(loginFrame, text="Login", fg="blue",command=lambda :checkLogInData(username.get(), password.get()))
+    button_create = Button(loginFrame, text="Create Account", fg="green",command=CreateUser)
+    label_login.grid(row=0,column=1)
+    label_username.grid(row=1)
+    label_password.grid(row=2)
+    usernameField.grid(row=1, column=1)
+    passwordField.grid(row=2, column=1)
+    button_quit.grid(row=4)
+    button_login.grid(row=4, column=4)
+    button_create.grid(row=4, column=2)
+    loginScreen.geometry("480x480")
+    loginScreen.mainloop()

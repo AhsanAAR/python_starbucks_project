@@ -14,7 +14,7 @@ class star_card:
 
     def __init__(self, cardNum, credit):
         self.m_cardNum = str(cardNum)
-        self.m_credit = int(credit)
+        self.m_credit = float(credit)
 
 
     # the __str__ function is defined for each class so that it returns a string format
@@ -54,8 +54,9 @@ class web_user:
         return '!'.join(map(str, [self.m_uName, self.m_password, self.m_fullName,self.m_address,self.m_telNum
                                   ,self.m_email,self.m_starCard.m_cardNum]))
     def Str(self):
-        return '    '.join(map(str, [self.m_uName, self.m_password, self.m_fullName,self.m_address,self.m_telNum
-                                  ,self.m_email,self.m_starCard.m_cardNum]))
+        return [self.m_uName, self.m_fullName, self.m_address, self.m_telNum
+                              ,self.m_email,self.m_starCard.m_cardNum]
+
 
 class member(web_user):
     'Class respresnting members or customers on the portal'
@@ -65,10 +66,17 @@ class member(web_user):
         self.m_depends = depends
         self.m_type = 'C'
 
+    def discount(self):
+        if self.m_points > 500:
+            return 40
+        elif self.m_points > 300:
+            return 30
+        else:
+            return 0
     def __str__(self):
         return self.m_type + '!' + super().__str__() + '!' + '!'.join(map(str,['Y' if self.m_depends else 'N',self.m_points]))
     def Str(self):
-        return self.m_type + '  ' + super().Str() + '   ' + '   '.join(map(str,['Y' if self.m_depends else 'N',self.m_points]))
+        return ['Customer'] + super().Str() + ['Yes' if self.m_depends else 'No', str(self.m_points)]
 
 class basic_empoyee(web_user):
     'Class respresnting a basic employee'
@@ -79,7 +87,11 @@ class basic_empoyee(web_user):
     def __str__(self):
         return self.m_type + '!' + super().__str__()
     def Str(self):
-        return self.m_type + '  ' + super().Str()
+        return ['Employee'] + super().Str()
+
+    def discount(self):
+        return 25
+
 
 class manager(web_user):
     'Class respresnting a manager'
@@ -90,7 +102,10 @@ class manager(web_user):
     def __str__(self):
         return self.m_type + '!' + super().__str__()
     def Str(self):
-        return self.m_type + '  ' + super().Str()
+        return ['Manager'] + super().Str()
+    def discount(self):
+        return 35
+
 
 # function that converts WebUser.txt into object lists
 def loadRecords():
