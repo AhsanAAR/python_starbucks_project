@@ -55,14 +55,14 @@ class web_user:
                                   ,self.m_email,self.m_starCard.m_cardNum]))
     def Str(self):
         return [self.m_uName, self.m_fullName, self.m_address, self.m_telNum
-                              ,self.m_email,self.m_starCard.m_cardNum]
+                              ,self.m_email,self.m_starCard.m_cardNum,str(self.m_starCard.m_credit)]
 
 
 class member(web_user):
     'Class respresnting members or customers on the portal'
     def __init__(self, uName, password, fullName, address, telNum, email, starCardNum, depends, points):
         super(member, self).__init__(uName,password,fullName,address,telNum,email,starCardNum)
-        self.m_points = int(points)
+        self.m_points = float(points)
         self.m_depends = depends
         self.m_type = 'C'
 
