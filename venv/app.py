@@ -390,6 +390,7 @@ def CreateUser():
 
     def addUser():
         global currentUser
+        global type
         if (UserNameString.get() == '' or NameString.get() == '' or AddressString.get() == ''
                 or TeleNumString.get() == '' or EmailString.get() == '' or
                 PasswordField.get() == '' or type == ''):
