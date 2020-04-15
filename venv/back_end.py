@@ -6,6 +6,7 @@ employeeList = []
 managerList = []
 starCardList = []
 itemsList = []
+profit = float(0)
 
 import random
 
@@ -98,17 +99,25 @@ class manager(web_user):
     def __init__(self, uName, password, fullName, address, telNum, email, starCardNum):
         super(manager, self).__init__(uName, password, fullName, address, telNum, email, starCardNum)
         self.m_type = 'M'
+        self.m_profit = float(0)
+
 
     def __str__(self):
         return self.m_type + '!' + super().__str__()
+
+
     def Str(self):
         return ['Manager'] + super().Str()
+
+
     def discount(self):
         return 35
 
 
 # function that converts WebUser.txt into object lists
 def loadRecords():
+    global profit
+    bprofit=False
     # opens the file in read mode
     print('Loading from files')
     with open("Records.txt","r") as f:
@@ -135,10 +144,18 @@ def loadRecords():
         # loop for loading shop items
         for line in f:
             line = line[:-1]
-            line = line.split('!')
-            itemsList.append(shop_item(line[0],line[1]))
+            if line == '#':
+                bprofit=True
+            if (not bprofit):
+                line = line.split('!')
+                itemsList.append(shop_item(line[0],line[1]))
+            else:
+                line = line.split('!')
+                itemsList.append(shop_item(line[0], line[1]))
+                profit=line[1]
 
 def writeToFiles():
+    global profit
     print('writing to files')
     with open("Records.txt","w") as f:
         [f.write(str(item) + '\n') for item in starCardList]
@@ -148,6 +165,8 @@ def writeToFiles():
         [f.write(str(item) + '\n') for item in managerList]
         f.write('#' + '\n')
         [f.write(str(item) + '\n') for item in itemsList]
+        f.write('#' + '\n')
+        f.write('profit!' + str(profit) + '\n')
     with open("WebUser.txt", "w") as f:
         [f.write(item.m_uName + '!' + item.m_password + '\n') for item in memberList]
         [f.write(item.m_uName + '!' + item.m_password + '\n') for item in employeeList]
