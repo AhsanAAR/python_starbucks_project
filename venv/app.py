@@ -4,6 +4,8 @@ import tkinter.messagebox
 from functools import partial
 from back_end import *
 
+k = 0
+total = 0
 currentUser = None
 loginScreen = None
 panelWindow = None
@@ -11,15 +13,11 @@ ViewWindow = None
 editWindow = None
 editInfoBox = None
 
-total = 0
-k = 0
-subtotal = 0
 
 def Topup():
     global currentUser
     global panelWindow
     topupscreen=tk.Toplevel()#creation of topup screen and dimention of topup scren
-    topupscreen.resizable(False,False)
     topupscreen.protocol("WM_DELETE_WINDOW", lambda: exit_btn())
     changePanel(panelWindow, topupscreen, True)
     def exit_btn():#exit function if user selects cash
@@ -75,7 +73,6 @@ def ViewInf():
     global panelWindow
     global currentUser
     ViewWindow = Tk()
-    ViewWindow.resizable(False,False)
     ViewWindow.protocol("WM_DELETE_WINDOW", lambda: changePanel(ViewWindow, panelWindow, True))
     changePanel(panelWindow,ViewWindow)
     ViewWindow.geometry("640x480")
@@ -85,9 +82,9 @@ def ViewInf():
     elif currentUser.m_type == 'E':
         editList = [currentUser] + memberList
     elif currentUser.m_type == 'M':
-        editList = managerList + memberList + employeeList
+        editList = [currentUser] + memberList + employeeList
     def populate(frame):
-        col = ['Type','Username','FullName','Address','TelePhoneNumber','E mail','StarCard','Credit','Depends','Points']
+        col = ['Type','Username','FullName','Address','TelePhoneNumber','E mail','StarCard','Depends','Points']
         for i in range(len(col)):
             t = Label(frame,text = col[i])
             t.grid(row = 0, column = i, padx = 5, pady = 2)
@@ -120,7 +117,6 @@ def EditInf():
     global panelWindow
     global editWindow
     editWindow = tk.Toplevel()
-    editWindow.resizable(False,False)
     editWindow.protocol("WM_DELETE_WINDOW", lambda: changePanel(editWindow, panelWindow, True))
     changePanel(panelWindow, editWindow)
     editList=0
@@ -129,46 +125,27 @@ def EditInf():
     elif currentUser.m_type=='E':
         editList=[currentUser]+memberList
     elif currentUser.m_type=='M':
-        editList = managerList + memberList + employeeList
+        editList = [currentUser] + memberList + employeeList
 
     def deleteUser(selection):
         if selection == (0,):
             return
         username = listbox.get(selection)
         if currentUser.m_uName == username:
-            tkinter.messagebox.showinfo("Invalid", "You can't delete yourself")
             return
         found = False
-        delStarCard = 0
-        delCard = True
-        for i in range(len(managerList)):
-            if found:
-                break
-            if managerList[i].m_uName == username:
-                del managerList[i]
-                delStarCard = managerList[i].m_starCard.m_cardNum
-                found = True
         for i in range(len(memberList)):
             if found:
                 break
             if memberList[i].m_uName == username:
-                delStarCard = memberList[i].m_starCard.m_cardNum
-                if memberList[i].m_depends:
-                    delCard = False
                 del memberList[i]
                 found = True
         for i in range(len(employeeList)):
             if found:
                 break
             if employeeList[i].m_uName == username:
-                delStarCard = employeeList[i].m_starCard.m_cardNum
                 del employeeList[i]
                 found = True
-        if delCard:
-            for j in range(len(starCardList)):
-                if starCardList[j].m_cardNum == delStarCard:
-                    del starCardList[j]
-                    break
         editWindow.destroy()
         EditInf()
 
@@ -178,12 +155,11 @@ def EditInf():
         username = listbox.get(selection)
         global editInfoBox
         editInfoBox = tk.Toplevel()
-        editInfoBox.resizable(False, False)
         def exitUpdateScreen():
             editInfoBox.destroy()
             EditInf()
-        editInfoBox.protocol("WM_DELETE_WINDOW", lambda: exitUpdateScreen())
-        changePanel(editWindow, editInfoBox, True)
+        editWindow.protocol("WM_DELETE_WINDOW", lambda: exitUpdateScreen())
+        changePanel(editWindow, editInfoBox)
         found = False
         userr = None
         for user in managerList:
@@ -221,11 +197,12 @@ def EditInf():
             if Name.get()=='' or Address.get()=='' or Telephone.get()=='' or Email.get() == '' or password.get()=='':
                 tkinter.messagebox.showinfo("Wrong Data", "No Empty Fields allowed")
                 return
-            if UserName.get() != userr.m_uName:
+            if  UserName.get() != currentUser.m_uName:
                 for user in memberList + employeeList + managerList:
                     if UserName.get() == user.m_uName:
-                        tkinter.messagebox.showinfo("Invalid", "This Username is already taken")
-                        return
+                        if count > 1:
+                            tkinter.messagebox.showinfo("Invalid", "This Username is already taken")
+                            return
             userr.m_uName = UserName.get()
             userr.m_fullName = Name.get()
             userr.m_address = Address.get()
@@ -286,17 +263,7 @@ def EditInf():
 def Purchasewin():
     global currentUser
     global panelWindow
-    global k
-    global total
-    global subtotal
-
-    total = 0
-    k = 0
-    subtotal = 0
-
-
     PurWin = tk.Toplevel()
-    PurWin.resizable(False,False)
     PurWin.protocol("WM_DELETE_WINDOW", lambda: exit_btn())
     changePanel(panelWindow, PurWin, True)
 
@@ -305,10 +272,9 @@ def Purchasewin():
         activityPanel()
 
     def checkout():
+        global total
         if(currentUser.m_starCard.m_credit>=total):
-            currentUser.m_starCard.m_credit -= subtotal
-            if(currentUser.m_type == 'C'):
-                currentUser.m_points += subtotal
+            currentUser.m_starCard.m_credit -= total
             tkinter.messagebox.showinfo("Order Successful","Your Order Was Successful Please Wait While We PrePare It For You")
             tkinter.messagebox.showinfo("Remaining Balance","Your Remaining Balance is Dhs" + str(currentUser.m_starCard.m_credit))
             exit_btn()
@@ -319,23 +285,22 @@ def Purchasewin():
 
     def addtocart(items, listbox):
         global k
-        global total
-        global subtotal
         if k != 0:
             listbox.delete(END)
             listbox.delete(END)
             listbox.delete(END)
+        global total
         total += items.m_price
         i = items.m_itemName + "      " + str(items.m_price)
         listbox.insert(END, i)
-        j = "Total : " + str(total) + " Dhs"
+        j = "Total : " + str(total)+" Dhs"
         listbox.insert(END, j)
         disc = currentUser.discount()
         discprice = total * disc / 100
         j = "After : " + str(disc) + " % discount of " + str(discprice)
         listbox.insert(END, j)
-        subtotal = total - discprice
-        j = "SubTotal : " + str(subtotal)
+        total = total - discprice
+        j = "SubTotal : " + str(total)
         listbox.insert(END, j)
         if k == 0:
             k += 1
@@ -363,7 +328,6 @@ def Purchasewin():
 
 def CreateUser():
     signUpWindow = tk.Toplevel()
-    signUpWindow.resizable(False,False)
     global loginScreen
 
     type = 'E'
@@ -474,7 +438,6 @@ def activityPanel():
     global panelWindow
     global loginScreen
     panelWindow = tk.Toplevel()
-    panelWindow.resizable(False,False)
     changePanel(loginScreen,panelWindow)
     panelWindow.protocol("WM_DELETE_WINDOW", lambda : logOut())
     def logOut():
@@ -542,7 +505,6 @@ def checkLogInData(username, password):
 def startUp():
     global loginScreen
     loginScreen = Tk()
-    loginScreen.resizable(False,False)
     loginFrame = Frame(loginScreen,width=240,height=240)
     loginFrame.pack()
     username = StringVar()

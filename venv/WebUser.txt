@@ -1,1 +1,7 @@
-admin!admin
+test!test
+test123!test
+newManager!new
+hello!hello
+manager!hello
+Abba!yourokok
+ali69!alialiali
