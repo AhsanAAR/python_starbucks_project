@@ -5,7 +5,7 @@ from functools import partial
 from back_end import *
 
 k = 0
-total = 0
+total = float(0)
 currentUser = None
 loginScreen = None
 panelWindow = None
@@ -275,6 +275,9 @@ def Purchasewin():
         global total
         if(currentUser.m_starCard.m_credit>=total):
             currentUser.m_starCard.m_credit -= total
+            global profit
+            profit += total
+            total = 0
             tkinter.messagebox.showinfo("Order Successful","Your Order Was Successful Please Wait While We PrePare It For You")
             tkinter.messagebox.showinfo("Remaining Balance","Your Remaining Balance is Dhs" + str(currentUser.m_starCard.m_credit))
             exit_btn()
@@ -437,6 +440,7 @@ def CreateUser():
 def activityPanel():
     global panelWindow
     global loginScreen
+    label_Profit=0
     panelWindow = tk.Toplevel()
     changePanel(loginScreen,panelWindow)
     panelWindow.protocol("WM_DELETE_WINDOW", lambda : logOut())
@@ -451,6 +455,8 @@ def activityPanel():
     button_TopUp = Button(panelWindow, text="TopUp Star Card", command = lambda : Topup())
     label_welcome = Label(panelWindow, text="Welcome Back! ")
     label_credits = Label(panelWindow, text="Current Balance : " + str(currentUser.m_starCard.m_credit) + " Dhs ")
+    if(currentUser.m_type == 'M'):
+        label_Profit = Label(panelWindow, text="Profit For The Current Day : " + str(profit) + " Dhs ")
     label_welcome.pack(pady = 10)
     button_viewInfo.pack(pady = 10)
     button_editInfo.pack(pady = 10)
@@ -458,6 +464,8 @@ def activityPanel():
     button_TopUp.pack(pady = 10)
     button_LogOut.pack(pady = 10)
     label_credits.pack(pady = 10)
+    if(currentUser.m_type == 'M'):
+        label_Profit.pack(pady = 10)
     panelWindow.geometry("500x500")
 
 def changePanel(first,second, destroy = False):

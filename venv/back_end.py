@@ -6,6 +6,7 @@ employeeList = []
 managerList = []
 starCardList = []
 itemsList = []
+profit = float(0)
 
 import random
 
@@ -101,14 +102,20 @@ class manager(web_user):
 
     def __str__(self):
         return self.m_type + '!' + super().__str__()
+
+
     def Str(self):
         return ['Manager'] + super().Str()
+
+
     def discount(self):
         return 35
 
 
 # function that converts WebUser.txt into object lists
 def loadRecords():
+    global profit
+    bprofit=False
     # opens the file in read mode
     print('Loading from files')
     with open("Records.txt","r") as f:
@@ -122,8 +129,6 @@ def loadRecords():
         # loop for loading all the users
         for line in f:
             line = line[:-1]
-            if line == '#':
-                break
             line = line.split('!')
             if line[0] == 'C':
                 memberList.append(member(line[1],line[2],line[3],line[4],line[5],line[6],line[7],True if line[8] == 'Y' else False
@@ -133,12 +138,19 @@ def loadRecords():
             elif line[0] == 'M':
                 managerList.append(manager(line[1],line[2],line[3],line[4],line[5],line[6],line[7]))
         # loop for loading shop items
-        for line in f:
+    with open("items.txt", "r") as x:
+        for line in x:
             line = line[:-1]
+            if line == '#':
+                break
             line = line.split('!')
             itemsList.append(shop_item(line[0],line[1]))
+        for line in x:
+            line = line.split('!')
+            profit=float(line[1])
 
 def writeToFiles():
+    global profit
     print('writing to files')
     with open("Records.txt","w") as f:
         [f.write(str(item) + '\n') for item in starCardList]
@@ -146,8 +158,10 @@ def writeToFiles():
         [f.write(str(item) + '\n') for item in memberList]
         [f.write(str(item) + '\n') for item in employeeList]
         [f.write(str(item) + '\n') for item in managerList]
-        f.write('#' + '\n')
-        [f.write(str(item) + '\n') for item in itemsList]
+    with open("items.txt", "w") as x:
+        [x.write(str(item) + '\n') for item in itemsList]
+        x.write('#' + '\n')
+        x.write('profit!' + str(profit) + '\n')
     with open("WebUser.txt", "w") as f:
         [f.write(item.m_uName + '!' + item.m_password + '\n') for item in memberList]
         [f.write(item.m_uName + '!' + item.m_password + '\n') for item in employeeList]

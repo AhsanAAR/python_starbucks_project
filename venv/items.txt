@@ -1,0 +1,9 @@
+Cappuccino!100
+Latte!130
+Mixed Tea!90
+Cinnamon Tea!110
+Fries Large!130
+Fries Small!60
+Coke!40
+#
+profit!0.0

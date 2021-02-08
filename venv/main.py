@@ -5,8 +5,3 @@ loadRecords()
 startUp()
 writeToFiles()
 
-
-
-
-
-
